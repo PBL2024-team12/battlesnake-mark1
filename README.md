@@ -1,3 +1,7 @@
+# リンク集
+ - BattleSnakeのリクエストとレスポンスの形式：[https://docs.battlesnake.com/api/example-move](https://docs.battlesnake.com/api/example-move)
+
+
 # Battlesnake Python Starter Project
 
 An official Battlesnake template written in Python. Get started at [play.battlesnake.com](https://play.battlesnake.com).
