@@ -1,0 +1,15 @@
+{
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "features": {
+    "forwardPorts": [3333, 4444],
+    
+    "portsAttributes": {
+      "3333": {
+        "label": "app-standard-preview"
+      },
+      "4444": {
+        "label": "app-pro-preview"
+      }
+    }
+  }
+}
