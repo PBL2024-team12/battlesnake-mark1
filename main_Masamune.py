@@ -66,19 +66,24 @@ def move(game_state: typing.Dict) -> typing.Dict:
     board_width = game_state['board']['width']
     board_height = game_state['board']['height']
 
-    if my_head["x"] == 0:  # Neck is left of head, don't move left
+    if my_head["x"] == 0:  # 左端
         is_move_safe["left"] = False
 
-    elif my_head["x"] == board_width:  # Neck is right of head, don't move right
+    elif my_head["x"] == board_width - 1:  # 右端
         is_move_safe["right"] = False
 
-    elif my_head["y"] == 0:  # Neck is right of head, don't move right
+    if my_head["y"] == 0:  # 下
         is_move_safe["down"] = False
 
-    elif my_head["y"] == board_height:  # Neck is right of head, don't move right
+    elif my_head["y"] == board_height - 1:  # 上
         is_move_safe["up"] = False
     # TODO: Step 2 - Prevent your Battlesnake from colliding with itself
     my_body = game_state['you']['body']
+    result = my_head["x"] - 1 in my_body
+    if result == True:
+        is_move_safe["left"] = False
+
+
 
     # TODO: Step 3 - Prevent your Battlesnake from colliding with other Battlesnakes
     # opponents = game_state['board']['snakes']
