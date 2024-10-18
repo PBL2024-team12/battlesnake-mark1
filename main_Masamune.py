@@ -23,9 +23,9 @@ def info() -> typing.Dict:
     return {
         "apiversion": "1",
         "author": "",  # TODO: Your Battlesnake Username
-        "color": "#888888",  # TODO: Choose color
-        "head": "default",  # TODO: Choose head
-        "tail": "default",  # TODO: Choose tail
+        "color": "#1f1e33",  # TODO: Choose color
+        "head": "all-seeing",  # TODO: Choose head
+        "tail": "weight",  # TODO: Choose tail
     }
 
 
@@ -95,5 +95,4 @@ def move(game_state: typing.Dict) -> typing.Dict:
 # Start server when `python main.py` is run
 if __name__ == "__main__":
     from server import run_server
-
-    run_server({"info": info, "start": start, "move": move, "end": end})
+    run_server({"info": info, "start": start, "move": move, "end": end, "port": "8003"})
