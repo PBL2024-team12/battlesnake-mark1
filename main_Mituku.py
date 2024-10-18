@@ -22,10 +22,10 @@ def info() -> typing.Dict:
 
     return {
         "apiversion": "1",
-        "author": "",  # TODO: Your Battlesnake Username
+        "author": "SnAkE",  # TODO: Your Battlesnake Username
         "color": "#006400",  # TODO: Choose color
-        "head": "default",  # TODO: Choose head
-        "tail": "default",  # TODO: Choose tail
+        "head": "replit-mark",  # TODO: Choose head
+        "tail": "mouse",  # TODO: Choose tail
     }
 
 
@@ -66,11 +66,33 @@ def move(game_state: typing.Dict) -> typing.Dict:
     # board_width = game_state['board']['width']
     # board_height = game_state['board']['height']
 
+    board_width = game_state['board']['width']
+    board_height = game_state['board']['height']
+
+    if my_head["x"] == 0:
+        is_move_safe["left"] = False
+
+    if my_head["x"] == board_width - 1:
+        is_move_safe["right"] = False
+
+    if my_head["y"] ==  0:
+        is_move_safe["down"] = False
+
+    if my_head["y"] == board_height - 1:
+        is_move_safe["up"] = False
+
+    
+
+
+
+
     # TODO: Step 2 - Prevent your Battlesnake from colliding with itself
     # my_body = game_state['you']['body']
 
     # TODO: Step 3 - Prevent your Battlesnake from colliding with other Battlesnakes
     # opponents = game_state['board']['snakes']
+
+    opponents = game_state['board']['snakes']
 
     # Are there any safe moves left?
     safe_moves = []
@@ -95,4 +117,5 @@ def move(game_state: typing.Dict) -> typing.Dict:
 # Start server when `python main.py` is run
 if __name__ == "__main__":
     from server import run_server
+
     run_server({"info": info, "start": start, "move": move, "end": end, "port": "8002"})
