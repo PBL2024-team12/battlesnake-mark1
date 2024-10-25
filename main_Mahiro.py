@@ -9,6 +9,7 @@
 #
 # To get you started we've included code to prevent your Battlesnake from moving backwards.
 # For more info see docs.battlesnake.com
+# 
 
 import random
 import typing
@@ -23,7 +24,7 @@ def info() -> typing.Dict:
     return {
         "apiversion": "1",
         "author": "",  # TODO: Your Battlesnake Username
-        "color": "#E890978",  # TODO: Choose color   a
+        "color": "#26CF04",  # TODO: Choose color   a
         "head": "shark",  # TODO: Choose head
         "tail": "swirl",  # TODO: Choose tail
     }
@@ -74,6 +75,23 @@ def move(game_state: typing.Dict) -> typing.Dict:
         is_move_safe["up"]=False
     elif my_head["y"]==0:
         is_move_safe["down"]=False
+    
+    for i in range(len(game_state["you"]["body"])):
+        xx=my_head["x"]-game_state["you"]["body"][i]
+        if xx<=1 and xx>0:
+            is_move_safe["left"]=False
+        elif xx>=-1 and xx<0:
+            is_move_safe["right"]=False
+    for i in range(len(game_state["you"]["body"])):
+        yy=my_head["y"]-game_state["you"]["body"][i]
+        if yy<=1 and yy>0:
+            is_move_safe["down"]=False
+        elif yy>=-1 and yy<0:
+            is_move_safe["up"]=False
+    
+    
+        
+    
 
     # TODO: Step 2 - Prevent your Battlesnake from colliding with itself
     # my_body = game_state['you']['body']
@@ -98,6 +116,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
         
         
     next_move = random.choice(safe_moves)
+    
 
     # TODO: Step 4 - Move towards food instead of random, to regain health and survive longer
     # food = game_state['board']['food']
