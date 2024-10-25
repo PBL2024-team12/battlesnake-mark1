@@ -89,16 +89,16 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
     for body in my_body:
     
-        if my_head["x"] == body["x"] - 1 and my_head["y"] == body["y"]:
+        if my_head["x"] - 1 == body["x"] and my_head["y"] == body["y"]:
             is_move_safe["left"] = False
 
-        if my_head["x"] == body["x"] + 1 and my_head["y"] == body["y"]:
+        if my_head["x"] + 1 == body["x"] and my_head["y"] == body["y"]:
             is_move_safe["right"] = False
 
-        if my_head["y"] == body["y"] - 1 and my_head["x"] == body["x"]:
+        if my_head["y"] - 1 == body["y"] and my_head["x"] == body["x"]:
             is_move_safe["down"] = False
 
-        if my_head["y"] == body["y"] + 1 and my_head["x"] == body["x"]:
+        if my_head["y"] + 1 == body["y"] and my_head["x"] == body["x"]:
             is_move_safe["up"] = False
 
 
@@ -130,16 +130,16 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
         for food in all_food:
 
-            if my_head["x"] == food["x"] - 1 and my_head["y"] == food["y"]:
+            if my_head["x"] - 1 == food["x"] and my_head["y"] == food["y"]:
                 is_move_safe["left"] = False
 
-            if my_head["x"] == food["x"] + 1 and my_head["y"] == food["y"]:
+            if my_head["x"] + 1 == food["x"] and my_head["y"] == food["y"]:
                 is_move_safe["right"] = False
 
-            if my_head["y"] == food["y"] - 1 and my_head["x"] == food["x"]:
+            if my_head["y"] - 1 == food["y"] and my_head["x"] == food["x"]:
                 is_move_safe["down"] = False
 
-            if my_head["y"] == food["y"] + 1 and my_head["x"] == food["x"]:
+            if my_head["y"] + 1 == food["y"] and my_head["x"] == food["x"]:
                 is_move_safe["up"] = False
 
 
