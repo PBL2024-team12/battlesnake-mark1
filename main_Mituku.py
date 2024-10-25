@@ -123,6 +123,21 @@ def move(game_state: typing.Dict) -> typing.Dict:
             if my_head["y"] + 1 == food["y"] and my_head["x"] == food["x"]:
                 is_move_safe["up"] = False
 
+    #餌と壁なら餌を選ぶ
+
+    if is_move_safe["left"] == False and is_move_safe["right"] == False and is_move_safe["up"] == False and is_move_safe["down"] == False and ( my_head["x"] - 1 == food["x"] and my_head["y"] == food["y"] ):
+        is_move_safe["left"] = True
+
+    if is_move_safe["left"] == False and is_move_safe["right"] == False and is_move_safe["up"] == False and is_move_safe["down"] == False and ( my_head["x"] + 1 == food["x"] and my_head["y"] == food["y"] ):
+        is_move_safe["right"] = True
+
+    if is_move_safe["left"] == False and is_move_safe["right"] == False and is_move_safe["up"] == False and is_move_safe["down"] == False and ( my_head["y"] - 1 == food["y"] and my_head["x"] == food["x"] ):
+        is_move_safe["down"] = True
+
+    if is_move_safe["left"] == False and is_move_safe["right"] == False and is_move_safe["up"] == False and is_move_safe["down"] == False and ( my_head["y"] + 1 == food["y"] and my_head["x"] == food["x"] ):
+        is_move_safe["up"] = True
+
+
     # TODO: Step 3 - Prevent your Battlesnake from colliding with other Battlesnakes
     # opponents = game_state['board']['snakes']
 
