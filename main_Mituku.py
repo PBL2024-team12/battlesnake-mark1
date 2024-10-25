@@ -123,6 +123,28 @@ def move(game_state: typing.Dict) -> typing.Dict:
     # TODO: Step 4 - Move towards food instead of random, to regain health and survive longer
     # food = game_state['board']['food']
 
+    all_food = game_state['board']['food']
+    my_health = game_state["you"]["health"]
+
+    if my_health >= 20:
+
+        for food in all_food:
+
+            if my_head["x"] == food["x"] - 1 and my_head["y"] == food["y"]:
+                is_move_safe["left"] = False
+
+            if my_head["x"] == food["x"] + 1 and my_head["y"] == food["y"]:
+                is_move_safe["right"] = False
+
+            if my_head["y"] == food["y"] - 1 and my_head["x"] == food["x"]:
+                is_move_safe["down"] = False
+
+            if my_head["y"] == food["y"] + 1 and my_head["x"] == food["x"]:
+                is_move_safe["up"] = False
+
+
+    
+
     print(f"MOVE {game_state['turn']}: {next_move}")
     return {"move": next_move}
 
