@@ -101,23 +101,26 @@ def move(game_state: typing.Dict) -> typing.Dict:
         if my_head["y"] + 1 == body["y"] and my_head["x"] == body["x"]:
             is_move_safe["up"] = False
 
+    # TODO: Step 4 - Move towards food instead of random, to regain health and survive longer
+    # food = game_state['board']['food']
+
     all_food = game_state['board']['food']
     my_health = game_state['you']['health']
 
-    
+    if my_health > 20:
            
-    for food in all_food:
+        for food in all_food:
 
-        if my_head["x"] - 1 == food["x"] and my_head["y"] == food["y"]:
+            if my_head["x"] - 1 == food["x"] and my_head["y"] == food["y"]:
                 is_move_safe["left"] = False
 
-        if my_head["x"] + 1 == food["x"] and my_head["y"] == food["y"]:
+            if my_head["x"] + 1 == food["x"] and my_head["y"] == food["y"]:
                 is_move_safe["right"] = False
 
-        if my_head["y"] - 1 == food["y"] and my_head["x"] == food["x"]:
+            if my_head["y"] - 1 == food["y"] and my_head["x"] == food["x"]:
                 is_move_safe["down"] = False
 
-        if my_head["y"] + 1 == food["y"] and my_head["x"] == food["x"]:
+            if my_head["y"] + 1 == food["y"] and my_head["x"] == food["x"]:
                 is_move_safe["up"] = False
 
     # TODO: Step 3 - Prevent your Battlesnake from colliding with other Battlesnakes
@@ -138,27 +141,9 @@ def move(game_state: typing.Dict) -> typing.Dict:
     # Choose a random move from the safe ones
     next_move = random.choice(safe_moves)
 
-    # TODO: Step 4 - Move towards food instead of random, to regain health and survive longer
-    # food = game_state['board']['food']
-
-    all_food = game_state['board']['food']
-    my_health = game_state['you']['health']
+    
 
     
-           
-    for food in all_food:
-
-        if my_head["x"] - 1 == food["x"] and my_head["y"] == food["y"]:
-                is_move_safe["left"] = False
-
-        if my_head["x"] + 1 == food["x"] and my_head["y"] == food["y"]:
-                is_move_safe["right"] = False
-
-        if my_head["y"] - 1 == food["y"] and my_head["x"] == food["x"]:
-                is_move_safe["down"] = False
-
-        if my_head["y"] + 1 == food["y"] and my_head["x"] == food["x"]:
-                is_move_safe["up"] = False
     
 
 
