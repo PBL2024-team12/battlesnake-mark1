@@ -76,20 +76,29 @@ def move(game_state: typing.Dict) -> typing.Dict:
     elif my_head["y"]==0:
         is_move_safe["down"]=False
     
+    body=game_state['you']['body']
     for i in range(len(game_state["you"]["body"])):
-        xx=my_head["x"]-game_state["you"]["body"][i]
-        if xx<=1 and xx>0:
-            is_move_safe["left"]=False
-        elif xx>=-1 and xx<0:
-            is_move_safe["right"]=False
-    for i in range(len(game_state["you"]["body"])):
-        yy=my_head["y"]-game_state["you"]["body"][i]
-        if yy<=1 and yy>0:
+        xx=my_head["x"]-body["x"]
+        yy=my_head["y"]-body["y"]
+        if xx==0 and yy==1:
             is_move_safe["down"]=False
-        elif yy>=-1 and yy<0:
-            is_move_safe["up"]=False
+        elif xx==0 and yy==-1:
+            is_move_safe["up"]==False
+        if xx==1 and yy==0:
+            is_move_safe["left"]==False
+        elif xx==-1 and yy==0:
+            is_move_safe["right"]==False
+
     
     
+    if my_head["x"]==game_state['board']['food']-1:
+        is_move_safe["right"]=False
+    elif my_head["x"]==game_state['board']['food']-1:
+        is_move_safe["left"]=False
+    if my_head["y"]==game_state['board']['width']
+        is_move_safe["up"]=False
+    elif my_head["y"]==0:
+        is_move_safe["down"]=False    
         
     
 
