@@ -49,6 +49,8 @@ def move(game_state: typing.Dict) -> typing.Dict:
     # We've included code to prevent your Battlesnake from moving backwards
     my_head = game_state["you"]["body"][0]  # Coordinates of your head
     my_neck = game_state["you"]["body"][1]  # Coordinates of your "neck"
+    length_for_tail = game_state["you"]["length"] - 1 #蛇のしっぽの再現のための変数
+    my_tail = game_state["you"]["body"][length_for_tail] #蛇のしっぽの先
 
     if my_neck["x"] < my_head["x"]:  # Neck is left of head, don't move left
         is_move_safe["left"] = False
@@ -86,7 +88,8 @@ def move(game_state: typing.Dict) -> typing.Dict:
     # my_body = game_state['you']['body']
 
     my_body = game_state['you']['body']
-
+    cutted_my_tail = my_body.pop()                            #蛇のしっぽの先だけポップさせている
+    
     for body in my_body:
     
         if my_head["x"] - 1 == body["x"] and my_head["y"] == body["y"]:
@@ -100,6 +103,9 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
         if my_head["y"] + 1 == body["y"] and my_head["x"] == body["x"]:
             is_move_safe["up"] = False
+
+    my_body = game_state['you']['body']                                   #蛇のしっぽを復活
+
 
     # TODO: Step 4 - Move towards food instead of random, to regain health and survive longer
     # food = game_state['board']['food']
