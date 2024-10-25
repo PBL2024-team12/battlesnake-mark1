@@ -126,21 +126,20 @@ def move(game_state: typing.Dict) -> typing.Dict:
     all_food = game_state['board']['food']
     my_health = game_state['you']['health']
 
-    if my_health >= 30:
+    
            
-        
-        for food in all_food:
+    for food in all_food:
 
-            if my_head["x"] - 1 == food["x"] and my_head["y"] == food["y"]:
+        if my_head["x"] - 1 == food["x"] and my_head["y"] == food["y"]:
                 is_move_safe["left"] = False
 
-            if my_head["x"] + 1 == food["x"] and my_head["y"] == food["y"]:
+        if my_head["x"] + 1 == food["x"] and my_head["y"] == food["y"]:
                 is_move_safe["right"] = False
 
-            if my_head["y"] - 1 == food["y"] and my_head["x"] == food["x"]:
+        if my_head["y"] - 1 == food["y"] and my_head["x"] == food["x"]:
                 is_move_safe["down"] = False
 
-            if my_head["y"] + 1 == food["y"] and my_head["x"] == food["x"]:
+        if my_head["y"] + 1 == food["y"] and my_head["x"] == food["x"]:
                 is_move_safe["up"] = False
     
 
