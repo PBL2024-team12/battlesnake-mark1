@@ -124,10 +124,13 @@ def move(game_state: typing.Dict) -> typing.Dict:
     # food = game_state['board']['food']
 
     all_food = game_state['board']['food']
-    my_health = game_state["you"]["health"]
+    my_health = game_state['you']['health']
 
-    if my_health >= 20:
+    if my_health >= 30:
+        fully_fed()
 
+    def fully_fed():    
+        
         for food in all_food:
 
             if my_head["x"] - 1 == food["x"] and my_head["y"] == food["y"]:
@@ -141,7 +144,10 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
             if my_head["y"] + 1 == food["y"] and my_head["x"] == food["x"]:
                 is_move_safe["up"] = False
+    
 
+
+    
 
     
 
