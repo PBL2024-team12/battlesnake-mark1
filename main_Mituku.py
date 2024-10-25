@@ -127,9 +127,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
     my_health = game_state['you']['health']
 
     if my_health >= 30:
-        fully_fed()
-
-    def fully_fed():    
+           
         
         for food in all_food:
 
