@@ -68,20 +68,24 @@ def move(game_state: typing.Dict) -> typing.Dict:
     # board_width = game_state['board']['width']
     # board_height = game_state['board']['height']
 
-    board_width = game_state['board']['width']
-    board_height = game_state['board']['height']
+    def prevent_bound(x1,y1):
 
-    if my_head["x"] == 0:
-        is_move_safe["left"] = False
+        board_width = game_state['board']['width']
+        board_height = game_state['board']['height']
+    
+        if my_head["x"] + x1 == 0:
+            is_move_safe["left"] = False
 
-    if my_head["x"] == board_width - 1:
-        is_move_safe["right"] = False
+        if my_head["x"] + x1 == board_width - 1:
+            is_move_safe["right"] = False
 
-    if my_head["y"] ==  0:
-        is_move_safe["down"] = False
+        if my_head["y"] + y1 ==  0:
+            is_move_safe["down"] = False
 
-    if my_head["y"] == board_height - 1:
-        is_move_safe["up"] = False
+        if my_head["y"] + y1 == board_height - 1:
+            is_move_safe["up"] = False
+
+    prevent_bound(0,0)
 
 
     # TODO: Step 2 - Prevent your Battlesnake from colliding with itself
@@ -148,6 +152,20 @@ def move(game_state: typing.Dict) -> typing.Dict:
     # opponents = game_state['board']['snakes']
 
     opponents = game_state['board']['snakes']
+
+    #短絡的袋小路の回避
+
+
+    
+
+    
+
+
+
+
+
+
+
 
     # Are there any safe moves left?
     safe_moves = []
