@@ -68,84 +68,142 @@ def move(game_state: typing.Dict) -> typing.Dict:
     # board_width = game_state['board']['width']
     # board_height = game_state['board']['height']
 
-    def prevent_bound(x1,y1):
+    def prevent_bound(x1,y1,z1):
 
         board_width = game_state['board']['width']
         board_height = game_state['board']['height']
+        bound_count = 0
     
         if my_head["x"] + x1 == 0:
-            is_move_safe["left"] = False
+            if z1 == 0:
+                is_move_safe["left"] = False
+            else:
+                bound_count = bound_count + 1
 
         if my_head["x"] + x1 == board_width - 1:
-            is_move_safe["right"] = False
+            if z1 == 0:
+                is_move_safe["right"] = False
+            else:
+                bound_count = bound_count + 1
 
         if my_head["y"] + y1 ==  0:
-            is_move_safe["down"] = False
+            if z1 == 0:
+                is_move_safe["down"] = False
+            else:
+                bound_count = bound_count + 1
 
         if my_head["y"] + y1 == board_height - 1:
-            is_move_safe["up"] = False
+            if z1 == 0:
+                is_move_safe["up"] = False
+            else:
+                bound_count = bound_count + 1
 
-    prevent_bound(0,0)
+        return bound_count
+
+    prevent_bound(0,0,0)
 
 
     # TODO: Step 2 - Prevent your Battlesnake from colliding with itself
     # my_body = game_state['you']['body']
 
-    my_body = game_state['you']['body']
-    cutted_my_tail = my_body.pop()                            #蛇のしっぽの先だけポップさせている
+    def prevent_itself(x1,y1,z1):
+
+        my_body = game_state['you']['body']
+        cutted_my_tail = my_body.pop()                            #蛇のしっぽの先だけポップさせている
+        itself_count = 0
     
-    for body in my_body:
+        for body in my_body:
     
-        if my_head["x"] - 1 == body["x"] and my_head["y"] == body["y"]:
-            is_move_safe["left"] = False
+            if my_head["x"] + x1 - 1 == body["x"] and my_head["y"] + y1 == body["y"]:
+                if z1 == 0:
+                    is_move_safe["left"] = False
+                else:
+                    itself_count = itself_count + 1
 
-        if my_head["x"] + 1 == body["x"] and my_head["y"] == body["y"]:
-            is_move_safe["right"] = False
+            if my_head["x"] + x1 + 1 == body["x"] and my_head["y"] + y1 == body["y"]:
+                if z1 == 0:
+                    is_move_safe["right"] = False
+                else:
+                    itself_count = itself_count + 1
 
-        if my_head["y"] - 1 == body["y"] and my_head["x"] == body["x"]:
-            is_move_safe["down"] = False
+            if my_head["y"] + y1 - 1 == body["y"] and my_head["x"] + x1 == body["x"]:
+                if z1 == 0:
+                    is_move_safe["down"] = False
+                else:
+                    itself_count = itself_count + 1
 
-        if my_head["y"] + 1 == body["y"] and my_head["x"] == body["x"]:
-            is_move_safe["up"] = False
+            if my_head["y"] + y1 + 1 == body["y"] and my_head["x"] + x1 == body["x"]:
+                if z1 == 0:
+                    is_move_safe["up"] = False
+                else:
+                    itself_count = itself_count + 1
 
-    my_body = game_state['you']['body']                                   #蛇のしっぽを復活
+        my_body = game_state['you']['body']                                   #蛇のしっぽを復活(関数化しているので今は不要)
+
+        return itself_count
+
+    prevent_itself(0,0,0)
 
 
     # TODO: Step 4 - Move towards food instead of random, to regain health and survive longer
     # food = game_state['board']['food']
 
     all_food = game_state['board']['food']
-    my_health = game_state['you']['health']
 
-    if my_health > 20:
+    def prevent_food(x1,y1,z1):
+
+        
+        food_count = 0
            
         for food in all_food:
 
-            if my_head["x"] - 1 == food["x"] and my_head["y"] == food["y"]:
-                is_move_safe["left"] = False
+            if my_head["x"] + x1 - 1 == food["x"] and my_head["y"] + y1 == food["y"]:
+                if z1 == 0:
+                    is_move_safe["left"] = False
+                else:
+                    food_count = food_count + 1
 
-            if my_head["x"] + 1 == food["x"] and my_head["y"] == food["y"]:
-                is_move_safe["right"] = False
+            if my_head["x"] + x1 + 1 == food["x"] and my_head["y"] + y1 == food["y"]:
+                if z1 == 0:
+                    is_move_safe["right"] = False
+                else:
+                    food_count = food_count + 1
 
-            if my_head["y"] - 1 == food["y"] and my_head["x"] == food["x"]:
-                is_move_safe["down"] = False
+            if my_head["y"] + y1 - 1 == food["y"] and my_head["x"] + x1 == food["x"]:
+                if z1 == 0:
+                    is_move_safe["down"] = False
+                else:
+                    food_count = food_count + 1
 
-            if my_head["y"] + 1 == food["y"] and my_head["x"] == food["x"]:
-                is_move_safe["up"] = False
+            if my_head["y"] + y1 + 1 == food["y"] and my_head["x"] + x1 == food["x"]:
+                if z1 == 0:
+                    is_move_safe["up"] = False
+                else:
+                    food_count = food_count + 1
+
+        return food_count
+
+    my_health = game_state['you']['health']
+
+
+    if my_health > 20:
+        prevent_food(0,0,0)
 
     #餌と壁なら餌を選ぶ
 
-    if is_move_safe["left"] == False and is_move_safe["right"] == False and is_move_safe["up"] == False and is_move_safe["down"] == False and ( my_head["x"] - 1 == food["x"] and my_head["y"] == food["y"] ):
-        is_move_safe["left"] = True
+    for food in all_food:
 
-    if is_move_safe["left"] == False and is_move_safe["right"] == False and is_move_safe["up"] == False and is_move_safe["down"] == False and ( my_head["x"] + 1 == food["x"] and my_head["y"] == food["y"] ):
-        is_move_safe["right"] = True
+        if is_move_safe["left"] == False and is_move_safe["right"] == False and is_move_safe["up"] == False and is_move_safe["down"] == False and ( my_head["x"] - 1 == food["x"] and my_head["y"] == food["y"] ):
+            is_move_safe["left"] = True
 
-    if is_move_safe["left"] == False and is_move_safe["right"] == False and is_move_safe["up"] == False and is_move_safe["down"] == False and ( my_head["y"] - 1 == food["y"] and my_head["x"] == food["x"] ):
-        is_move_safe["down"] = True
+        if is_move_safe["left"] == False and is_move_safe["right"] == False and is_move_safe["up"] == False and is_move_safe["down"] == False and ( my_head["x"] + 1 == food["x"] and my_head["y"] == food["y"] ):
+            is_move_safe["right"] = True
 
-    if is_move_safe["left"] == False and is_move_safe["right"] == False and is_move_safe["up"] == False and is_move_safe["down"] == False and ( my_head["y"] + 1 == food["y"] and my_head["x"] == food["x"] ):
-        is_move_safe["up"] = True
+        if is_move_safe["left"] == False and is_move_safe["right"] == False and is_move_safe["up"] == False and is_move_safe["down"] == False and ( my_head["y"] - 1 == food["y"] and my_head["x"] == food["x"] ):
+            is_move_safe["down"] = True
+
+        if is_move_safe["left"] == False and is_move_safe["right"] == False and is_move_safe["up"] == False and is_move_safe["down"] == False and ( my_head["y"] + 1 == food["y"] and my_head["x"] == food["x"] ):
+            is_move_safe["up"] = True
 
 
     # TODO: Step 3 - Prevent your Battlesnake from colliding with other Battlesnakes
@@ -154,6 +212,84 @@ def move(game_state: typing.Dict) -> typing.Dict:
     opponents = game_state['board']['snakes']
 
     #短絡的袋小路の回避
+    next_left_obstacle_count = 100
+    next_right_obstacle_count = 100
+    next_down_obstacle_count = 100
+    next_up_obstacle_count = 100
+
+    if is_move_safe["left"] == True:
+
+        next_left_obstacle_count = 0
+
+        if my_health > 50:
+            next_left_obstacle_count = next_left_obstacle_count + prevent_bound(-1,0,1)
+            next_left_obstacle_count = next_left_obstacle_count + prevent_itself(-1,0,1)
+            next_left_obstacle_count = next_left_obstacle_count + prevent_food(-1,0,1)
+        else:
+            next_left_obstacle_count = next_left_obstacle_count + prevent_bound(-1,0,1) 
+            next_left_obstacle_count = next_left_obstacle_count + prevent_itself(-1,0,1) 
+
+    if is_move_safe["right"] == True:
+        
+        next_right_obstacle_count = 0
+
+        if my_health > 50:
+            next_right_obstacle_count = next_right_obstacle_count + prevent_bound(1,0,1) 
+            next_right_obstacle_count = next_right_obstacle_count + prevent_itself(1,0,1) 
+            next_right_obstacle_count = next_right_obstacle_count + prevent_food(1,0,1)
+        else:
+            next_right_obstacle_count = next_right_obstacle_count + prevent_bound(1,0,1) 
+            next_right_obstacle_count = next_right_obstacle_count + prevent_itself(1,0,1) 
+
+    if is_move_safe["down"] == True:
+        
+        next_down_obstacle_count = 0
+
+        if my_health > 50:
+            next_down_obstacle_count = next_down_obstacle_count + prevent_bound(0,-1,1) 
+            next_down_obstacle_count = next_down_obstacle_count + prevent_itself(0,-1,1) 
+            next_down_obstacle_count = next_down_obstacle_count + prevent_food(0,-1,1)
+        else:
+            next_down_obstacle_count = next_down_obstacle_count + prevent_bound(0,-1,1) 
+            next_down_obstacle_count = next_down_obstacle_count + prevent_itself(0,-1,1) 
+
+    if is_move_safe["up"] == True:
+        
+        next_up_obstacle_count = 0
+
+        if my_health > 50:
+            next_up_obstacle_count = next_up_obstacle_count + prevent_bound(0,1,1) 
+            next_up_obstacle_count = next_up_obstacle_count + prevent_itself(0,1,1) 
+            next_up_obstacle_count = next_up_obstacle_count + prevent_food(0,1,1)
+        else:
+            next_up_obstacle_count = next_up_obstacle_count + prevent_bound(0,1,1) 
+            next_up_obstacle_count = next_up_obstacle_count + prevent_itself(0,1,1) 
+
+    if min(next_left_obstacle_count, next_right_obstacle_count, next_down_obstacle_count, next_up_obstacle_count) == next_left_obstacle_count and next_left_obstacle_count < 50:
+        is_move_safe["right"] = False
+        is_move_safe["down"] = False
+        is_move_safe["up"] = False
+
+    if min(next_left_obstacle_count, next_right_obstacle_count, next_down_obstacle_count, next_up_obstacle_count) == next_right_obstacle_count and next_right_obstacle_count < 50:
+        is_move_safe["left"] = False
+        is_move_safe["down"] = False
+        is_move_safe["up"] = False
+
+
+    if min(next_left_obstacle_count, next_right_obstacle_count, next_down_obstacle_count, next_up_obstacle_count) == next_down_obstacle_count and next_down_obstacle_count < 50:
+        is_move_safe["right"] = False
+        is_move_safe["left"] = False
+        is_move_safe["up"] = False
+
+    if min(next_left_obstacle_count, next_right_obstacle_count, next_down_obstacle_count, next_up_obstacle_count) == next_up_obstacle_count and next_up_obstacle_count < 50:
+        is_move_safe["right"] = False
+        is_move_safe["down"] = False
+        is_move_safe["left"] = False
+
+    
+    
+            
+        
 
 
     
