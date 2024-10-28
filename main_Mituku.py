@@ -212,68 +212,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
     opponents = game_state['board']['snakes']
 
 
-    #餌に向かって動く
-    distance_to_food = [0,0,0]
-    i = 0
-    food0 = game_state["board"]["food"][0]
-    food1 = game_state["board"]["food"][1]
-    food2 = game_state["board"]["food"][2]
-
-    if my_health < 10:
-
-        for food in all_food:
-            distance_to_food[i] = abs(my_head["x"] - food["x"]) + abs(my_head["y"] - food["y"])
-            i = i + 1
-
-        min_food_distance = min(distance_to_food[0], distance_to_food[1], distance_to_food[2])
-        fd_count = 0
-
-        if min_food_distance == distance_to_food[0]:
-
-            if my_head["x"] - food0["x"] < 0 and is_move_safe["left"] == True and is_move_safe["right"] == True:
-                is_move_safe["left"] = False
-
-            elif my_head["x"] - food0["x"] > 0 and is_move_safe["left"] == True and is_move_safe["right"] == True:
-                is_move_safe["right"] = False
-
-            if my_head["y"] - food0["y"] < 0 and is_move_safe["down"] == True and is_move_safe["up"] == True:
-                is_move_safe["down"] = False
-
-            elif my_head["y"] - food0["y"] > 0 and is_move_safe["down"] == True and is_move_safe["up"] == True:
-                is_move_safe["up"] = False
-
-            fd_count = fd_count + 1
-
-        elif min_food_distance == distance_to_food[1] and fd_count == 0:
-
-            if my_head["x"] - food1["x"] < 0:
-                is_move_safe["left"] = False
-
-            elif my_head["x"] - food1["x"] > 0:
-                is_move_safe["right"] = False
-
-            if my_head["y"] - food1["y"] < 0:
-                is_move_safe["down"] = False
-
-            elif my_head["y"] - food1["y"] > 0:
-                is_move_safe["up"] = False
-
-            fd_count = fd_count + 1
-
-            
-        elif min_food_distance == distance_to_food[2] and fd_count == 0:
-
-            if my_head["x"] - food2["x"] < 0:
-                is_move_safe["left"] = False
-
-            elif my_head["x"] - food2["x"] > 0:
-                is_move_safe["right"] = False
-
-            if my_head["y"] - food2["y"] < 0:
-                is_move_safe["down"] = False
-
-            elif my_head["y"] - food2["y"] > 0:
-                is_move_safe["up"] = False
+    
 
 
         
@@ -348,6 +287,68 @@ def move(game_state: typing.Dict) -> typing.Dict:
             is_move_safe["left"] = False
             done_count = 1
 
+    #餌に向かって動く
+    distance_to_food = [0,0,0]
+    i = 0
+    food0 = game_state["board"]["food"][0]
+    food1 = game_state["board"]["food"][1]
+    food2 = game_state["board"]["food"][2]
+
+    if my_health < 10:
+
+        for food in all_food:
+            distance_to_food[i] = abs(my_head["x"] - food["x"]) + abs(my_head["y"] - food["y"])
+            i = i + 1
+
+        min_food_distance = min(distance_to_food[0], distance_to_food[1], distance_to_food[2])
+        fd_count = 0
+
+        if min_food_distance == distance_to_food[0]:
+
+            if my_head["x"] - food0["x"] < 0 and is_move_safe["left"] == True and is_move_safe["right"] == True:
+                is_move_safe["left"] = False
+
+            elif my_head["x"] - food0["x"] > 0 and is_move_safe["left"] == True and is_move_safe["right"] == True:
+                is_move_safe["right"] = False
+
+            if my_head["y"] - food0["y"] < 0 and is_move_safe["down"] == True and is_move_safe["up"] == True:
+                is_move_safe["down"] = False
+
+            elif my_head["y"] - food0["y"] > 0 and is_move_safe["down"] == True and is_move_safe["up"] == True:
+                is_move_safe["up"] = False
+
+            fd_count = fd_count + 1
+
+        elif min_food_distance == distance_to_food[1] and fd_count == 0:
+
+            if my_head["x"] - food1["x"] < 0 and is_move_safe["left"] == True and is_move_safe["right"] == True:
+                is_move_safe["left"] = False
+
+            elif my_head["x"] - food1["x"] > 0 and is_move_safe["left"] == True and is_move_safe["right"] == True:
+                is_move_safe["right"] = False
+
+            if my_head["y"] - food1["y"] < 0 and is_move_safe["down"] == True and is_move_safe["up"] == True:
+                is_move_safe["down"] = False
+
+            elif my_head["y"] - food1["y"] > 0 and is_move_safe["down"] == True and is_move_safe["up"] == True:
+                is_move_safe["up"] = False
+
+            fd_count = fd_count + 1
+
+            
+        elif min_food_distance == distance_to_food[2] and fd_count == 0:
+
+            if my_head["x"] - food2["x"] < 0 and is_move_safe["left"] == True and is_move_safe["right"] == True:
+                is_move_safe["left"] = False
+
+            elif my_head["x"] - food2["x"] > 0 and is_move_safe["left"] == True and is_move_safe["right"] == True:
+                is_move_safe["right"] = False
+
+            if my_head["y"] - food2["y"] < 0 and is_move_safe["down"] == True and is_move_safe["up"] == True:
+                is_move_safe["down"] = False
+
+            elif my_head["y"] - food2["y"] > 0 and is_move_safe["down"] == True and is_move_safe["up"] == True:
+                is_move_safe["up"] = False
     
     
             
