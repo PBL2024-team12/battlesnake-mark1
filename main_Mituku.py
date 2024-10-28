@@ -211,6 +211,64 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
     opponents = game_state['board']['snakes']
 
+
+    #餌に向かって動く
+    distance_to_food = [0,0,0]
+    i = 0
+    food0 = game_state["board"]["food"][0]
+    food1 = game_state["board"]["food"][1]
+    food2 = game_state["board"]["food"][2]
+
+    if my_health < 10:
+
+        for food in all_food:
+            distance_to_food[i] = abs(my_head["x"] - food["x"]) + abs(my_head["y"] - food["y"])
+            i = i + 1
+
+        min_food_distance = min(distance_to_food[0], distance_to_food[1], distance_to_food[2])
+
+        if min_food_distance == distance_to_food[0]:
+            if my_head["x"] - food0["x"] < 0:
+                is_move_safe["right"] = False
+
+            elif my_head["x"] - food0["x"] > 0:
+                is_move_safe["left"] = False
+
+            if my_head["y"] - food0["y"] < 0:
+                is_move_safe["up"] = False
+
+            elif my_head["y"] - food0["y"] > 0:
+                is_move_safe["down"] = False
+
+        elif min_food_distance == distance_to_food[1]:
+            if my_head["x"] - food1["x"] < 0:
+                is_move_safe["right"] = False
+
+            elif my_head["x"] - food1["x"] > 0:
+                is_move_safe["left"] = False
+
+            if my_head["y"] - food1["y"] < 0:
+                is_move_safe["up"] = False
+
+            elif my_head["y"] - food1["y"] > 0:
+                is_move_safe["down"] = False
+            
+        elif min_food_distance == distance_to_food[2]:
+            if my_head["x"] - food2["x"] < 0:
+                is_move_safe["right"] = False
+
+            elif my_head["x"] - food2["x"] > 0:
+                is_move_safe["left"] = False
+
+            if my_head["y"] - food2["y"] < 0:
+                is_move_safe["up"] = False
+
+            elif my_head["y"] - food2["y"] > 0:
+                is_move_safe["down"] = False
+
+
+        
+
     #短絡的袋小路の回避
     next_left_obstacle_count = next_right_obstacle_count = next_down_obstacle_count = next_up_obstacle_count = 100
 
