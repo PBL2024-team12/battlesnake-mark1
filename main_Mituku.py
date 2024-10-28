@@ -230,16 +230,16 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
         if min_food_distance == distance_to_food[0]:
 
-            if my_head["x"] - food0["x"] < 0:
+            if my_head["x"] - food0["x"] < 0 and is_move_safe["left"] == True and is_move_safe["right"] == True:
                 is_move_safe["left"] = False
 
-            elif my_head["x"] - food0["x"] > 0:
+            elif my_head["x"] - food0["x"] > 0 and is_move_safe["left"] == True and is_move_safe["right"] == True:
                 is_move_safe["right"] = False
 
-            if my_head["y"] - food0["y"] < 0:
+            if my_head["y"] - food0["y"] < 0 and is_move_safe["down"] == True and is_move_safe["up"] == True:
                 is_move_safe["down"] = False
 
-            elif my_head["y"] - food0["y"] > 0:
+            elif my_head["y"] - food0["y"] > 0 and is_move_safe["down"] == True and is_move_safe["up"] == True:
                 is_move_safe["up"] = False
 
             fd_count = fd_count + 1
