@@ -186,7 +186,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
     my_health = game_state['you']['health']
 
 
-    if my_health > 20:
+    if my_health > 10:
         prevent_food(0,0,0)
 
     #餌と壁なら餌を選ぶ
@@ -287,7 +287,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
         next_left_obstacle_count = next_left_obstacle_count + prevent_bound(-1,0,1) + prevent_itself(-1,0,1)
 
-        if my_health > 50:
+        if my_health > 10:
             next_left_obstacle_count = next_left_obstacle_count + prevent_food(-1,0,1)
 
     if is_move_safe["right"] == True:
@@ -296,7 +296,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
         next_right_obstacle_count = next_right_obstacle_count + prevent_bound(1,0,1) + prevent_itself(1,0,1) 
 
-        if my_health > 50:
+        if my_health > 10:
             next_right_obstacle_count = next_right_obstacle_count + prevent_food(1,0,1)
 
     if is_move_safe["down"] == True:
@@ -305,7 +305,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
         next_down_obstacle_count = next_down_obstacle_count + prevent_bound(0,-1,1) + prevent_itself(0,-1,1) 
         
-        if my_health > 50:
+        if my_health > 10:
             next_down_obstacle_count = next_down_obstacle_count + prevent_food(0,-1,1)
 
     if is_move_safe["up"] == True:
@@ -314,7 +314,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
         next_up_obstacle_count = next_up_obstacle_count + prevent_bound(0,1,1) + prevent_itself(0,1,1) 
 
-        if my_health > 50:
+        if my_health > 10:
             next_up_obstacle_count = next_up_obstacle_count + prevent_food(0,1,1)
 
     next_min_count = min(next_left_obstacle_count, next_right_obstacle_count, next_down_obstacle_count, next_up_obstacle_count)
