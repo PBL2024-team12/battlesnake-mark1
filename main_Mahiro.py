@@ -45,11 +45,19 @@ def end(game_state: typing.Dict):
 # See https://docs.battlesnake.com/api/example-move for available data
 def move(game_state: typing.Dict) -> typing.Dict:
 
+    #安全に進む選択肢が複数ある場合に最善の選択肢を選ぶための関数
+    recom={"up":False, "down":False, "left":False,"right":False}
+    #標準搭載の関数。食べ物を食べるなど、比較的危険を多くする選択肢は一度除いてある
     is_move_safe = {"up": True, "down": True, "left": True, "right": True}
-
+    #比較的危険を多くする選択肢だが即死はしない行き方を格納したもの。
+    #emerは角に行くことを最終手段として許す関数
+    emer={"up":False, "down":False, "left":False,"right":False}
+    #emer2は
+    emer2={"up":False, "down":False, "left":False,"right":False}
     # We've included code to prevent your Battlesnake from moving backwards
     my_head = game_state["you"]["body"][0]  # Coordinates of your head
     my_neck = game_state["you"]["body"][1]  # Coordinates of your "neck"
+    bigth=game_state["you"]["length"]
 
     if my_neck["x"] < my_head["x"]:  # Neck is left of head, don't move left
         is_move_safe["left"] = False
@@ -76,42 +84,115 @@ def move(game_state: typing.Dict) -> typing.Dict:
     elif my_head["y"]==0:
         is_move_safe["down"]=False
     
-    body=game_state['you']['body']
-    for i in range(len(game_state["board"]["width"])):
-        xx=my_head["x"]-body[i]["x"]
-        yy=my_head["y"]-body[i]["y"]
-        if xx==0 and yy==1:
-            is_move_safe["down"]=False
-        elif xx==0 and yy==-1:
-            is_move_safe["up"]==False
-        if xx==1 and yy==0:
-            is_move_safe["left"]==False
-        elif xx==-1 and yy==0:
-            is_move_safe["right"]==False
-
-    food=game_state['board']['food']
-    for i in range(len(game_state['board']['width'])):
-        xx=my_head["x"]-food[i]["x"]
-        yy=my_head["y"]-food[i]["y"]
-        if xx==0 and yy==1:
-            is_move_safe["down"]=False
-        elif xx==0 and yy==-1:
-            is_move_safe["up"]==False
-        if xx==1 and yy==0:
-            is_move_safe["left"]==False
-        elif xx==-1 and yy==0:
-            is_move_safe["right"]==False
-         
-    # if my_head["x"]==game_state['board']['food']-1:
-    #     is_move_safe["right"]=False
-    # elif my_head["x"]==game_state['board']['food']-1:
-    #     is_move_safe["left"]=False
-    # if my_head["y"]==game_state['board']['width']:
-    #     is_move_safe["up"]=False
-    # elif my_head["y"]==0:
-    #     is_move_safe["down"]=False    
-        
+    #角を避ける(行き止まりに行くことを減らしたい)
+    if my_head["x"]==board_width-1 or my_head["x"]==0:
+        #蛇の長さによって場合分け(最初は食べる事より端でよけることを優先する)
+        if bigth<=4:
+            if my_head["y"]==1:
+                is_move_safe["down"]=False
+                emer2["down"]=True
+                recom["up"]=True
+            elif my_head["y"]==board_width-2:
+                is_move_safe["up"]=False
+                emer2["up"]=True
+                recom["down"]=True
+        else:
+            if my_head["y"]<=2:
+                is_move_safe["down"]=False
+                emer2["down"]=True
+                recom["up"]=True
+            elif my_head["y"]>=board_width-3:
+                is_move_safe["up"]=False
+                emer2["up"]=True
+                recom["down"]=True
+    elif my_head["y"]==board_width-1 or my_head["y"]==0:
+        #蛇の長さによって場合分け(最初は食べる事より端でよけることを優先する)
+        if bigth<=4:
+            if my_head["x"]==1:
+                is_move_safe["left"]=False
+                emer2["left"]=True
+                recom["right"]=True
+            elif my_head["x"]>=board_width-2:
+                is_move_safe["right"]=False
+                emer2["right"]=True
+                recom["left"]=True
+        else:
+            if my_head["x"]<=2:
+                is_move_safe["left"]=False
+                emer2["left"]=True
+                recom["right"]=True
+            elif my_head["x"]>=board_width-3:
+                is_move_safe["right"]=False
+                emer2["right"]=True
+                recom["left"]=True
     
+    # 自身の体とぶつからないようにする
+    body = game_state['you']['body']
+    for segment in body[1:-1]:  # 頭と尾を除く
+        if segment["x"] == my_head["x"] and segment["y"] == my_head["y"] + 1:
+            is_move_safe["up"] = False
+        elif segment["x"] == my_head["x"] and segment["y"] == my_head["y"] - 1:
+            is_move_safe["down"] = False
+        elif segment["x"] == my_head["x"] - 1 and segment["y"] == my_head["y"]:
+            is_move_safe["left"] = False
+        elif segment["x"] == my_head["x"] + 1 and segment["y"] == my_head["y"]:
+            is_move_safe["right"] = False
+
+    # 食べ物をhpが少なくなるまで避ける
+    food = game_state['board']['food']
+    my_health = game_state["you"]["health"]
+    next_move="0"
+    if food:
+        if my_health>15:
+            for f in food:
+                if f["x"] == my_head["x"] and f["y"] == my_head["y"] + 1:
+                    is_move_safe["up"] = False
+                    emer["up"]=True
+                elif f["x"] == my_head["x"] and f["y"] == my_head["y"] - 1:
+                    is_move_safe["down"] = False
+                    emer["down"]=True
+                elif f["x"] == my_head["x"] - 1 and f["y"] == my_head["y"]:
+                    is_move_safe["left"] = False
+                    emer["left"]=True
+                elif f["x"] == my_head["x"] + 1 and f["y"] == my_head["y"]:
+                    is_move_safe["right"] = False
+                    emer["right"]=True
+        else:
+            min=12*(2**0.5)
+            for f in food:
+                if f["x"] == my_head["x"] and f["y"] == my_head["y"] + 1:
+                    next_move="up"
+                    break
+                elif f["x"] == my_head["x"] and f["y"] == my_head["y"] - 1:
+                    next_move="down"
+                    break
+                elif f["x"] == my_head["x"] - 1 and f["y"] == my_head["y"]:
+                    next_move="left"
+                    break
+                elif f["x"] == my_head["x"] + 1 and f["y"] == my_head["y"]:
+                    next_move="right"
+                # 食べ物が一番近くにあるか探す
+                # 三平方の定理を利用して、直線距離で近い食べ物を探す
+                dist=((f["x"]-my_head["x"])**2+(f["x"]-my_head["y"])**2)**0.5
+                if(dist<min):
+                    min=dist
+                    xmin=f["x"]
+                    ymin=f["y"]
+            if(next_move=="0"):
+                #食べ物に近づくことを最善策とする
+                if my_head["x"]<xmin:
+                    recom["right"]=True
+                elif my_head["x"]>xmin:
+                    recom["left"]=True
+                if my_head["y"]>ymin:
+                    recom["down"]=True
+                elif my_head["y"]<ymin:
+                    recom["up"]=True            
+                
+                    
+                
+                    
+         
 
     # TODO: Step 2 - Prevent your Battlesnake from colliding with itself
     # my_body = game_state['you']['body']
@@ -122,20 +203,46 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
     # Are there any safe moves left?
     safe_moves = []
+    rec_moves=[]
     for move, isSafe in is_move_safe.items():
         if isSafe:
             safe_moves.append(move)
+    
+    #安全な行き先が複数ある時、最善の行き先を選択する
+    if len(safe_moves)>=2:
+        for move, isSafe in recom.items():
+            if isSafe:
+                rec_moves.append(move)
+                for i in range(len(safe_moves)):
+                    if rec_moves[len(rec_moves)-1]==safe_moves[i]:
+                        next_move=rec_moves[len(rec_moves)-1]
+        
 
+    #消去法
     if len(safe_moves) == 0:
+        for move,isSafe in emer.items():
+            if isSafe:
+                safe_moves.append(move)
+                print("emerge")
+    if len(safe_moves) == 0:
+        for move,isSafe in emer2.items():
+             if isSafe:
+                safe_moves.append(move)
+                print("emerge2")
+    if len(safe_moves)==0:
         print(f"MOVE {game_state['turn']}: No safe moves detected! Moving down")
         return {"move": "down"}
 
     # Choose a random move from the safe ones
-    
-    
+    # hpが少ない時、食べ物がある方向に行く
+    print(safe_moves)
         
         
-    next_move = random.choice(safe_moves)
+        
+    
+        
+    if next_move=="0":    
+        next_move = random.choice(safe_moves)
     
 
     # TODO: Step 4 - Move towards food instead of random, to regain health and survive longer
