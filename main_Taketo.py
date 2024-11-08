@@ -12,7 +12,7 @@
 
 import random
 import typing
-
+import time
 
 # info is called when you create your Battlesnake on play.battlesnake.com
 # and controls your Battlesnake's appearance
@@ -43,6 +43,7 @@ def end(game_state: typing.Dict):
 # Valid moves are "up", "down", "left", or "right"
 # See https://docs.battlesnake.com/api/example-move for available data
 def move(game_state: typing.Dict) -> typing.Dict:
+    start_process_time = time.perf_counter()
 
     is_move_safe = {"up": True, "down": True, "left": True, "right": True}
 
@@ -75,28 +76,18 @@ def move(game_state: typing.Dict) -> typing.Dict:
         is_move_safe["up"] = False
 
     # TODO: Step 2 - Prevent your Battlesnake from colliding with itself
-    my_body = game_state['you']['body']
-    for body in my_body:
-        if my_head["x"] == body["x"] and my_head["y"]+1 == body["y"]:
-            is_move_safe["up"] = False
-        if my_head["x"] == body["x"] and my_head["y"]-1 == body["y"]:
-            is_move_safe["down"] = False
-        if my_head["x"]+1 == body["x"] and my_head["y"] == body["y"]:
-            is_move_safe["right"] = False
-        if my_head["x"]-1 == body["x"] and my_head["y"] == body["y"]:
-            is_move_safe["left"] = False
-
     # TODO: Step 3 - Prevent your Battlesnake from colliding with other Battlesnakes
-    opponents = game_state['board']['snakes']
-    for opponent in opponents:
-        if opponent['id'] == game_state['you']['id']:
-            continue
-        for body in opponent['body']:
-            if my_head["x"] == body["x"] and my_head["y"] == body["y"]:
+    snakes = game_state['board']['snakes']
+    for snake in snakes:
+        for body in snake['body']:
+            if my_head["x"] == body["x"] and my_head["y"]+1 == body["y"]:
                 is_move_safe["up"] = False
+            if my_head["x"] == body["x"] and my_head["y"]-1 == body["y"]:
                 is_move_safe["down"] = False
-                is_move_safe["left"] = False
+            if my_head["x"]+1 == body["x"] and my_head["y"] == body["y"]:
                 is_move_safe["right"] = False
+            if my_head["x"]-1 == body["x"] and my_head["y"] == body["y"]:
+                is_move_safe["left"] = False
 
     # Are there any safe moves left?
     safe_moves = []
@@ -106,41 +97,69 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
     if len(safe_moves) == 0:
         print(f"MOVE {game_state['turn']}: No safe moves detected! Moving down")
-        return {"move": "down"}
+        end_process_time = time.perf_counter()
+        print('process time: {:.2f}ms'.format((end_process_time - start_process_time)*1000))
+        return {"move": "down", "shout": "I'm stuck!(´;ω;｀)"}
 
     # Choose a random move from the safe ones
     # next_move = random.choice(safe_moves)
 
-    # TODO: Step 4 - Move towards food instead of random, to regain health and survive longer
-    next_move = None
 
-    food = game_state['board']['food']
-    nearest_food = None
-    health = game_state['you']['health']
+    # TODO: Step 4 - Move towards food instead of random, to regain health and survive longer
+    
+    # calculate the distance to the nearest food
     board_height = game_state['board']['height']
     board_width = game_state['board']['width']
+    foods = game_state['board']['food']
+    nearest_food = None
     nearest_food_distance = board_height + board_width
-    for i in range(len(food)):
-        food_distance = abs(my_head["x"] - food[i]["x"]) + abs(my_head["y"] - food[i]["y"])
+    for i in range(len(foods)):
+        food_distance = abs(my_head["x"] - foods[i]["x"]) + abs(my_head["y"] - foods[i]["y"])
         if nearest_food is None:
-            nearest_food = food[i]
+            nearest_food = foods[i]
         elif food_distance < nearest_food_distance:
-            nearest_food = food[i]
+            nearest_food = foods[i]
             nearest_food_distance = food_distance
-    if(health <= nearest_food_distance + 10):
-        if(nearest_food["x"] > my_head["x"] and is_move_safe["right"]):
+
+    health = game_state['you']['health']
+    if health <= nearest_food_distance + 1:
+        # if health is low, move towards the nearest food
+        if nearest_food["x"] > my_head["x"] and is_move_safe["right"]:
             next_move = "right"
-        elif(nearest_food["x"] < my_head["x"] and is_move_safe["left"]):
+        elif nearest_food["x"] < my_head["x"] and is_move_safe["left"]:
             next_move = "left"
-        elif(nearest_food["y"] > my_head["y"] and is_move_safe["up"]):
+        elif nearest_food["y"] > my_head["y"] and is_move_safe["up"]:
             next_move = "up"
-        elif(nearest_food["y"] < my_head["y"] and is_move_safe["down"]):
+        elif nearest_food["y"] < my_head["y"] and is_move_safe["down"]:
             next_move = "down"
+        else:
+            next_move = random.choice(safe_moves)
+    else:
+        # if health is high, aboid both of foods and dangerous moves
+        is_move_aboid_food = is_move_safe.copy()
+        for food in foods:
+            if my_head["x"] == food["x"] and my_head["y"]+1 == food["y"]:
+                is_move_aboid_food["up"] = False
+            if my_head["x"] == food["x"] and my_head["y"]-1 == food["y"]:
+                is_move_aboid_food["down"] = False
+            if my_head["x"]+1 == food["x"] and my_head["y"] == food["y"]:
+                is_move_aboid_food["right"] = False
+            if my_head["x"]-1 == food["x"] and my_head["y"] == food["y"]:
+                is_move_aboid_food["left"] = False
+        aboid_food_moves = []
+        for move, aboidFood in is_move_aboid_food.items():
+            if aboidFood:
+                aboid_food_moves.append(move)
+        print (aboid_food_moves)
+        if len(aboid_food_moves) == 0:
+            print("cant aboid food")
+            next_move = random.choice(safe_moves)
+        else:
+            next_move = random.choice(aboid_food_moves)
     
-    if(next_move is None):
-        next_move = random.choice(safe_moves)
-        
     print(f"MOVE {game_state['turn']}: {next_move}")
+    end_process_time = time.perf_counter()
+    print('process time: {:.2f}ms'.format((end_process_time - start_process_time)*1000))
     return {"move": next_move}
 
 
