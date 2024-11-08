@@ -45,8 +45,10 @@ def end(game_state: typing.Dict):
 # See https://docs.battlesnake.com/api/example-move for available data
 def move(game_state: typing.Dict) -> typing.Dict:
 
-    #安全に進む選択肢が複数ある場合に最善の選択肢を選ぶための関数
+    #最善の選択肢を選ぶための関数。空腹時にご飯に向かう方向を示す。
     recom={"up":False, "down":False, "left":False,"right":False}
+    #同じく真ん中の方向を示す。
+    rec2={"up":False, "down":False, "left":False,"right":False}
     #標準搭載の関数。食べ物を食べるなど、比較的危険を多くする選択肢は一度除いてある
     is_move_safe = {"up": True, "down": True, "left": True, "right": True}
     #比較的危険を多くする選択肢だが即死はしない行き方を格納したもの。
@@ -91,40 +93,40 @@ def move(game_state: typing.Dict) -> typing.Dict:
             if my_head["y"]==1:
                 is_move_safe["down"]=False
                 emer2["down"]=True
-                recom["up"]=True
+                
             elif my_head["y"]==board_width-2:
                 is_move_safe["up"]=False
                 emer2["up"]=True
-                recom["down"]=True
+                
         else:
             if my_head["y"]<=2:
                 is_move_safe["down"]=False
                 emer2["down"]=True
-                recom["up"]=True
+                
             elif my_head["y"]>=board_width-3:
                 is_move_safe["up"]=False
                 emer2["up"]=True
-                recom["down"]=True
+                
     elif my_head["y"]==board_width-1 or my_head["y"]==0:
         #蛇の長さによって場合分け(最初は食べる事より端でよけることを優先する)
         if bigth<=4:
             if my_head["x"]==1:
                 is_move_safe["left"]=False
                 emer2["left"]=True
-                recom["right"]=True
+                
             elif my_head["x"]>=board_width-2:
                 is_move_safe["right"]=False
                 emer2["right"]=True
-                recom["left"]=True
+                
         else:
             if my_head["x"]<=2:
                 is_move_safe["left"]=False
                 emer2["left"]=True
-                recom["right"]=True
+                
             elif my_head["x"]>=board_width-3:
                 is_move_safe["right"]=False
                 emer2["right"]=True
-                recom["left"]=True
+                
     
     # 自身の体とぶつからないようにする
     body = game_state['you']['body']
@@ -137,13 +139,28 @@ def move(game_state: typing.Dict) -> typing.Dict:
             is_move_safe["left"] = False
         elif segment["x"] == my_head["x"] + 1 and segment["y"] == my_head["y"]:
             is_move_safe["right"] = False
+            
+    # なるべく中央に向かう
+    if my_head["x"]<board_width/2:
+        rec2["right"]=True
+        if my_head["y"]<board_width/2:
+            rec2["up"]=True
+        else:
+            rec2["down"]=True
+    else:
+        rec2["left"]=True
+        if my_head["y"]<board_width/2:
+            rec2["up"]=True
+        else:
+            rec2["down"]=True
+    
 
     # 食べ物をhpが少なくなるまで避ける
     food = game_state['board']['food']
     my_health = game_state["you"]["health"]
     next_move="0"
     if food:
-        if my_health>15:
+        if my_health>10:
             for f in food:
                 if f["x"] == my_head["x"] and f["y"] == my_head["y"] + 1:
                     is_move_safe["up"] = False
@@ -204,18 +221,30 @@ def move(game_state: typing.Dict) -> typing.Dict:
     # Are there any safe moves left?
     safe_moves = []
     rec_moves=[]
+    rec2moves=[]
     for move, isSafe in is_move_safe.items():
         if isSafe:
             safe_moves.append(move)
     
     #安全な行き先が複数ある時、最善の行き先を選択する
     if len(safe_moves)>=2:
+        count=0
         for move, isSafe in recom.items():
             if isSafe:
+                count+=1
                 rec_moves.append(move)
                 for i in range(len(safe_moves)):
                     if rec_moves[len(rec_moves)-1]==safe_moves[i]:
                         next_move=rec_moves[len(rec_moves)-1]
+                        print("hungry")
+        if count==0:
+            for move,isSafe in rec2.items():
+                rec2moves.append(move)
+                for i in range(len(safe_moves)):
+                    if rec2moves[len(rec2moves)-1]==safe_moves[i]:
+                        next_move=rec2moves[len(rec2moves)-1]
+                        print("middle")
+                
         
 
     #消去法
