@@ -120,12 +120,14 @@ def move(game_state: typing.Dict) -> typing.Dict:
     # TODO: Step 2 - Prevent your Battlesnake from colliding with itself
     # my_body = game_state['you']['body']
     
-    
+    pop_counter = 0
 
     def prevent_itself(x1,y1,z1):
 
         #蛇のしっぽの先だけポップさせている（バグるので今は停止）
-        cutted_my_tail = my_body.pop()                            
+        if pop_counter == 0:
+            cutted_my_tail = my_body.pop()  
+            pop_counter = pop_counter + 1                          
         itself_count = 0
     
         for body in my_body:
