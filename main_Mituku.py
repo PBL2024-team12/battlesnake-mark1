@@ -154,7 +154,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
                 else:
                     itself_count = itself_count + 1
 
-        my_body = game_state['you']['body']                                   #蛇のしっぽを復活(関数化しているので今は不要)
+                                           #ここで蛇のしっぽを復活？(関数化しているので今は不要)
 
         return itself_count
 
@@ -274,48 +274,65 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
         done_count = 0
 
-        if next_min_count < 50:
+        if d == 1:
+            return next_down_obstacle_count
+        elif u == 1:
+            return next_up_obstacle_count
+        elif r == 1:
+            return next_right_obstacle_count
+        elif l == 1:
+            return next_left_obstacle_count
+        
+        else:
 
-            if next_min_count == next_left_obstacle_count:
-                    if z1 == 0:
-                        is_move_safe["right"] = False
-                        is_move_safe["down"] = False
-                        is_move_safe["up"] = False
-                        done_count = 1
-                    else:
-                        return 0
+            if next_min_count < 50:
 
-            if next_min_count == next_right_obstacle_count and done_count == 0:
-                    if z1 == 0:
-                        is_move_safe["left"] = False
-                        is_move_safe["down"] = False
-                        is_move_safe["up"] = False
-                        done_count = 1
-                    else:
-                        return 1
+                if next_min_count == next_left_obstacle_count:
+                        if z1 == 0:
+                            is_move_safe["right"] = False
+                            is_move_safe["down"] = False
+                            is_move_safe["up"] = False
+                            done_count = 1
+                        else:
+                            return 0
 
-            if next_min_count == next_down_obstacle_count and done_count == 0:
-                    if z1 == 0:
-                        is_move_safe["right"] = False
-                        is_move_safe["left"] = False
-                        is_move_safe["up"] = False
-                        done_count = 1
-                    else:
-                        return 2
+                if next_min_count == next_right_obstacle_count and done_count == 0:
+                        if z1 == 0:
+                            is_move_safe["left"] = False
+                            is_move_safe["down"] = False
+                            is_move_safe["up"] = False
+                            done_count = 1
+                        else:
+                            return 1
 
-            if next_min_count == next_up_obstacle_count and done_count == 0:
-                    if z1 == 0:
-                        is_move_safe["right"] = False
-                        is_move_safe["down"] = False
-                        is_move_safe["left"] = False
-                        done_count = 1
-                    else:
-                        return 3
+                if next_min_count == next_down_obstacle_count and done_count == 0:
+                        if z1 == 0:
+                            is_move_safe["right"] = False
+                            is_move_safe["left"] = False
+                            is_move_safe["up"] = False
+                            done_count = 1
+                        else:
+                            return 2
+
+                if next_min_count == next_up_obstacle_count and done_count == 0:
+                        if z1 == 0:
+                            is_move_safe["right"] = False
+                            is_move_safe["down"] = False
+                            is_move_safe["left"] = False
+                            done_count = 1
+                        else:
+                            return 3
                     
     #餌に向かって動く
-    
+    recom={"up":False, "down":False, "left":False,"right":False}
     
     def go_to_food():
+        #初期化
+        recom["down"] = False 
+        recom["up"] = False
+        recom["left"] = False
+        recom["right"] = False
+
         distance_to_food = [0,0,0]
         i = 0
         if my_health < 10:
@@ -329,89 +346,156 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
             if min_food_distance == distance_to_food[0]:
 
-                if my_head["x"] - food0["x"] < 0 and is_move_safe["left"] == True and is_move_safe["right"] == True:
-                    is_move_safe["left"] = False
+                if my_head["x"] - food0["x"] < 0:
+                    recom["right"] = True
 
-                elif my_head["x"] - food0["x"] > 0 and is_move_safe["left"] == True and is_move_safe["right"] == True:
-                    is_move_safe["right"] = False
+                elif my_head["x"] - food0["x"] > 0:
+                    recom["left"] = True
 
-                if my_head["y"] - food0["y"] < 0 and is_move_safe["down"] == True and is_move_safe["up"] == True:
-                    is_move_safe["down"] = False
+                if my_head["y"] - food0["y"] < 0:
+                    recom["up"] = True
 
-                elif my_head["y"] - food0["y"] > 0 and is_move_safe["down"] == True and is_move_safe["up"] == True:
-                    is_move_safe["up"] = False
+                elif my_head["y"] - food0["y"] > 0:
+                    recom["down"] = True
 
-                if my_head["x"] - food0["x"] == 0 and my_head["y"] - food0["y"] == 1 and is_move_safe["down"] == True and is_move_safe["up"] == True:
-                    is_move_safe["up"] = False
+                if my_head["x"] - food0["x"] == 0 and my_head["y"] - food0["y"] == 1:
+                    recom["down"] = True
+                    recom["up"] = False
+                    recom["left"] = False
+                    recom["right"] = False
+                    return 1
 
-                elif my_head["x"] - food0["x"] == 0 and my_head["y"] - food0["y"] == -1 and is_move_safe["down"] == True and is_move_safe["up"] == True:
-                    is_move_safe["down"] = False
+                elif my_head["x"] - food0["x"] == 0 and my_head["y"] - food0["y"] == -1:
+                    recom["down"] = False
+                    recom["up"] = True
+                    recom["left"] = False
+                    recom["right"] = False
+                    return 1
 
-                if my_head["x"] - food0["x"] == 1 and my_head["y"] - food0["y"] == 0 and is_move_safe["right"] == True and is_move_safe["keft"] == True:
-                    is_move_safe["right"] = False
+                if my_head["x"] - food0["x"] == 1 and my_head["y"] - food0["y"] == 0:
+                    recom["down"] = False
+                    recom["up"] = False
+                    recom["left"] = True
+                    recom["right"] = False
+                    return 1
 
-                elif my_head["x"] - food0["x"] == -1 and my_head["y"] - food0["y"] == 0 and is_move_safe["right"] == True and is_move_safe["left"] == True:
-                    is_move_safe["left"] = False
+                elif my_head["x"] - food0["x"] == -1 and my_head["y"] - food0["y"] == 0:
+                    recom["down"] = False
+                    recom["up"] = False
+                    recom["left"] = False
+                    recom["right"] = True
+                    return 1
 
                 fd_count = fd_count + 1
 
             if min_food_distance == distance_to_food[1] and fd_count == 0:
 
-                if my_head["x"] - food1["x"] < 0 and is_move_safe["left"] == True and is_move_safe["right"] == True:
-                    is_move_safe["left"] = False
+                if my_head["x"] - food1["x"] < 0:
+                    recom["right"] = True
 
-                elif my_head["x"] - food1["x"] > 0 and is_move_safe["left"] == True and is_move_safe["right"] == True:
-                    is_move_safe["right"] = False
+                elif my_head["x"] - food1["x"] > 0:
+                    recom["left"] = True
 
-                if my_head["y"] - food1["y"] < 0 and is_move_safe["down"] == True and is_move_safe["up"] == True:
-                    is_move_safe["down"] = False
+                if my_head["y"] - food1["y"] < 0:
+                    recom["up"] = True
 
-                elif my_head["y"] - food1["y"] > 0 and is_move_safe["down"] == True and is_move_safe["up"] == True:
-                    is_move_safe["up"] = False
+                elif my_head["y"] - food1["y"] > 0:
+                    recom["down"] = True
 
-                if my_head["x"] - food1["x"] == 0 and my_head["y"] - food1["y"] == 1 and is_move_safe["down"] == True and is_move_safe["up"] == True:
-                    is_move_safe["up"] = False
-                    
+                if my_head["x"] - food1["x"] == 0 and my_head["y"] - food1["y"] == 1:
+                    recom["down"] = True
+                    recom["up"] = False
+                    recom["left"] = False
+                    recom["right"] = False
+                    return 1
 
-                elif my_head["x"] - food1["x"] == 0 and my_head["y"] - food1["y"] == -1 and is_move_safe["down"] == True and is_move_safe["up"] == True:
-                    is_move_safe["down"] = False
+                elif my_head["x"] - food1["x"] == 0 and my_head["y"] - food1["y"] == -1:
+                    recom["down"] = False
+                    recom["up"] = True
+                    recom["left"] = False
+                    recom["right"] = False
+                    return 1
 
-                if my_head["x"] - food1["x"] == 1 and my_head["y"] - food1["y"] == 0 and is_move_safe["right"] == True and is_move_safe["left"] == True:
-                    is_move_safe["right"] = False
+                if my_head["x"] - food1["x"] == 1 and my_head["y"] - food1["y"] == 0:
+                    recom["down"] = False
+                    recom["up"] = False
+                    recom["left"] = True
+                    recom["right"] = False
+                    return 1
 
-                elif my_head["x"] - food1["x"] == -1 and my_head["y"] - food1["y"] == 0 and is_move_safe["right"] == True and is_move_safe["left"] == True:
-                    is_move_safe["left"] = False
+                elif my_head["x"] - food1["x"] == -1 and my_head["y"] - food1["y"] == 0:
+                    recom["down"] = False
+                    recom["up"] = False
+                    recom["left"] = False
+                    recom["right"] = True
+                    return 1
 
                 fd_count = fd_count + 1
 
                 
             if min_food_distance == distance_to_food[2] and fd_count == 0:
 
-                if my_head["x"] - food2["x"] < 0 and is_move_safe["left"] == True and is_move_safe["right"] == True:
-                    is_move_safe["left"] = False
+                if my_head["x"] - food2["x"] < 0:
+                    recom["right"] = True
 
-                elif my_head["x"] - food2["x"] > 0 and is_move_safe["left"] == True and is_move_safe["right"] == True:
-                    is_move_safe["right"] = False
+                elif my_head["x"] - food2["x"] > 0:
+                    recom["left"] = True
 
-                if my_head["y"] - food2["y"] < 0 and is_move_safe["down"] == True and is_move_safe["up"] == True:
-                    is_move_safe["down"] = False
+                if my_head["y"] - food2["y"] < 0:
+                    recom["up"] = True
 
-                elif my_head["y"] - food2["y"] > 0 and is_move_safe["down"] == True and is_move_safe["up"] == True:
-                    is_move_safe["up"] = False
+                elif my_head["y"] - food2["y"] > 0:
+                    recom["down"] = True
 
-                if my_head["x"] - food2["x"] == 0 and my_head["y"] - food2["y"] == 1 and is_move_safe["down"] == True and is_move_safe["up"] == True:
-                    is_move_safe["up"] = False
+                if my_head["x"] - food2["x"] == 0 and my_head["y"] - food2["y"] == 1:
+                    recom["down"] = True
+                    recom["up"] = False
+                    recom["left"] = False
+                    recom["right"] = False
+                    return 1
 
-                elif my_head["x"] - food2["x"] == 0 and my_head["y"] - food2["y"] == -1 and is_move_safe["down"] == True and is_move_safe["up"] == True:
-                    is_move_safe["down"] = False
+                elif my_head["x"] - food2["x"] == 0 and my_head["y"] - food2["y"] == -1:
+                    recom["down"] = False
+                    recom["up"] = True
+                    recom["left"] = False
+                    recom["right"] = False
+                    return 1
 
-                if my_head["x"] - food2["x"] == 1 and my_head["y"] - food2["y"] == 0 and is_move_safe["right"] == True and is_move_safe["keft"] == True:
-                    is_move_safe["right"] = False
+                if my_head["x"] - food2["x"] == 1 and my_head["y"] - food2["y"] == 0:
+                    recom["down"] = False
+                    recom["up"] = False
+                    recom["left"] = True
+                    recom["right"] = False
+                    return 1
 
-                elif my_head["x"] - food2["x"] == -1 and my_head["y"] - food2["y"] == 0 and is_move_safe["right"] == True and is_move_safe["left"] == True:
-                    is_move_safe["left"] = False
+                elif my_head["x"] - food2["x"] == -1 and my_head["y"] - food2["y"] == 0:
+                    recom["down"] = False
+                    recom["up"] = False
+                    recom["left"] = False
+                    recom["right"] = True
+                    return 1
 
-    
+                fd_count = fd_count + 1
+
+        if recom["down"] == True and is_move_safe["down"] == True:
+            is_move_safe["right"] = False
+            is_move_safe["up"] = False
+            is_move_safe["left"] = False
+        
+        if recom["up"] == True and is_move_safe["up"] == True:
+            is_move_safe["right"] = False
+            is_move_safe["down"] = False
+            is_move_safe["left"] = False
+
+        if recom["left"] == True and is_move_safe["left"] == True:
+            is_move_safe["right"] = False
+            is_move_safe["up"] = False
+            is_move_safe["down"] = False
+
+        if recom["right"] == True and is_move_safe["right"] == True:
+            is_move_safe["down"] = False
+            is_move_safe["up"] = False
+            is_move_safe["left"] = False
     
 
     #オススメ関数（行くべき場所を判定して，戻り値として基本は一方向を返す）と，安全関数(行って安全な場所を判定して，戻り値として複数方向を返す)をつくって，
@@ -425,10 +509,12 @@ def move(game_state: typing.Dict) -> typing.Dict:
     prevent_itself(0,0,0)
     if my_health > 10:
         prevent_food(0,0,0)
+        avoid_dead_end(0,0,0)
     else:
-        go_to_food()
+        if go_to_food() != 1:
+            avoid_dead_end(0,0,0)
     rather_food_than_border()
-    avoid_dead_end(0,0,0)
+    
     
 
 
