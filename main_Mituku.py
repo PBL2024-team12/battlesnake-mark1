@@ -125,7 +125,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
     def prevent_itself(x1,y1,z1):
 
         
-        #cutted_my_tail = my_body.pop()                            #蛇のしっぽの先だけポップさせている（バグるので今は停止）
+        cutted_my_tail = my_body.pop()                            #蛇のしっぽの先だけポップさせている（バグるので今は停止）
         itself_count = 0
     
         for body in my_body:
@@ -154,7 +154,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
                 else:
                     itself_count = itself_count + 1
 
-                                           #ここで蛇のしっぽを復活？(関数化しているので今は不要)
+        my_body = game_state['you']['body']                                   #ここで蛇のしっぽを復活？(関数化しているので今は不要)
 
         return itself_count
 
