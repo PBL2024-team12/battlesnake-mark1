@@ -52,7 +52,19 @@ def move(game_state: typing.Dict) -> typing.Dict:
     length_for_tail = game_state["you"]["length"] - 1 #蛇のしっぽの再現のための変数
     my_tail = game_state["you"]["body"][length_for_tail] #蛇のしっぽの先
 
+    board_width = game_state['board']['width']
+    board_height = game_state['board']['height']
 
+    my_body = game_state['you']['body']
+
+    all_food = game_state['board']['food']
+
+    my_health = game_state['you']['health']
+
+    food0 = game_state["board"]["food"][0]
+    if len(game_state["board"]["food"]) > 2:
+        food1 = game_state["board"]["food"][1]
+        food2 = game_state["board"]["food"][2]
 
     dead_end_counter = 0 #このカウンターで再帰が何回目なのか判断する．
 
@@ -75,9 +87,6 @@ def move(game_state: typing.Dict) -> typing.Dict:
     # board_height = game_state['board']['height']
 
     def prevent_bound(x1,y1,z1):
-
-        board_width = game_state['board']['width']
-        board_height = game_state['board']['height']
         bound_count = 0
     
         if my_head["x"] + x1 == 0:
@@ -110,11 +119,13 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
     # TODO: Step 2 - Prevent your Battlesnake from colliding with itself
     # my_body = game_state['you']['body']
+    
+    
 
     def prevent_itself(x1,y1,z1):
 
-        my_body = game_state['you']['body']
-        #cutted_my_tail = my_body.pop()                            #蛇のしっぽの先だけポップさせている
+        
+        #cutted_my_tail = my_body.pop()                            #蛇のしっぽの先だけポップさせている（バグるので今は停止）
         itself_count = 0
     
         for body in my_body:
@@ -152,7 +163,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
     # TODO: Step 4 - Move towards food instead of random, to regain health and survive longer
     # food = game_state['board']['food']
 
-    all_food = game_state['board']['food']
+    
 
     def prevent_food(x1,y1,z1):
 
@@ -187,7 +198,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
         return food_count
 
-    my_health = game_state['you']['health']
+    
 
 
     
@@ -302,10 +313,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
                         return 3
                     
     #餌に向かって動く
-    food0 = game_state["board"]["food"][0]
-    if len(game_state["board"]["food"]) > 2:
-        food1 = game_state["board"]["food"][1]
-        food2 = game_state["board"]["food"][2]
+    
     
     def go_to_food():
         distance_to_food = [0,0,0]
