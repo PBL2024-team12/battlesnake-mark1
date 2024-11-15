@@ -303,8 +303,9 @@ def move(game_state: typing.Dict) -> typing.Dict:
                     
     #餌に向かって動く
     food0 = game_state["board"]["food"][0]
-    food1 = game_state["board"]["food"][1]
-    food2 = game_state["board"]["food"][2]
+    if len(game_state["board"]["food"]) > 2:
+        food1 = game_state["board"]["food"][1]
+        food2 = game_state["board"]["food"][2]
     
     def go_to_food():
         distance_to_food = [0,0,0]
