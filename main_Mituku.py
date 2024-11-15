@@ -243,6 +243,18 @@ def move(game_state: typing.Dict) -> typing.Dict:
             elif my_head["y"] - food0["y"] > 0 and is_move_safe["down"] == True and is_move_safe["up"] == True:
                 is_move_safe["up"] = False
 
+            if my_head["x"] - food0["x"] == 0 and my_head["y"] - food0["y"] == 1 and is_move_safe["down"] == True and is_move_safe["up"] == True:
+                is_move_safe["up"] = False
+
+            elif my_head["x"] - food0["x"] == 0 and my_head["y"] - food0["y"] == -1 and is_move_safe["down"] == True and is_move_safe["up"] == True:
+                is_move_safe["down"] = False
+
+            if my_head["x"] - food0["x"] == 1 and my_head["y"] - food0["y"] == 0 and is_move_safe["right"] == True and is_move_safe["keft"] == True:
+                is_move_safe["right"] = False
+
+            elif my_head["x"] - food0["x"] == -1 and my_head["y"] - food0["y"] == 0 and is_move_safe["right"] == True and is_move_safe["left"] == True:
+                is_move_safe["left"] = False
+
             fd_count = fd_count + 1
 
         if min_food_distance == distance_to_food[1] and fd_count == 0:
@@ -258,6 +270,18 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
             elif my_head["y"] - food1["y"] > 0 and is_move_safe["down"] == True and is_move_safe["up"] == True:
                 is_move_safe["up"] = False
+
+            if my_head["x"] - food1["x"] == 0 and my_head["y"] - food1["y"] == 1 and is_move_safe["down"] == True and is_move_safe["up"] == True:
+                is_move_safe["up"] = False
+
+            elif my_head["x"] - food1["x"] == 0 and my_head["y"] - food1["y"] == -1 and is_move_safe["down"] == True and is_move_safe["up"] == True:
+                is_move_safe["down"] = False
+
+            if my_head["x"] - food1["x"] == 1 and my_head["y"] - food1["y"] == 0 and is_move_safe["right"] == True and is_move_safe["keft"] == True:
+                is_move_safe["right"] = False
+
+            elif my_head["x"] - food1["x"] == -1 and my_head["y"] - food1["y"] == 0 and is_move_safe["right"] == True and is_move_safe["left"] == True:
+                is_move_safe["left"] = False
 
             fd_count = fd_count + 1
 
@@ -276,6 +300,17 @@ def move(game_state: typing.Dict) -> typing.Dict:
             elif my_head["y"] - food2["y"] > 0 and is_move_safe["down"] == True and is_move_safe["up"] == True:
                 is_move_safe["up"] = False
 
+            if my_head["x"] - food2["x"] == 0 and my_head["y"] - food2["y"] == 1 and is_move_safe["down"] == True and is_move_safe["up"] == True:
+                is_move_safe["up"] = False
+
+            elif my_head["x"] - food2["x"] == 0 and my_head["y"] - food2["y"] == -1 and is_move_safe["down"] == True and is_move_safe["up"] == True:
+                is_move_safe["down"] = False
+
+            if my_head["x"] - food2["x"] == 1 and my_head["y"] - food2["y"] == 0 and is_move_safe["right"] == True and is_move_safe["keft"] == True:
+                is_move_safe["right"] = False
+
+            elif my_head["x"] - food2["x"] == -1 and my_head["y"] - food2["y"] == 0 and is_move_safe["right"] == True and is_move_safe["left"] == True:
+                is_move_safe["left"] = False
 
     
     #短絡的袋小路の回避
@@ -349,73 +384,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
                 is_move_safe["left"] = False
                 done_count = 1
 
-    #より良い動き
-    better_move_safe = {"up": False, "down": False, "left": False, "right": False}
-
-    if my_head["x"] == food0["x"] and my_head["y"] - food0["y"] == 1:
-                better_move_safe["down"] == True
-
-    if my_head["x"] == food1["x"] and my_head["y"] - food1["y"] == 1:
-                better_move_safe["down"] == True
     
-    if my_head["x"] == food2["x"] and my_head["y"] - food2["y"] == 1:
-                better_move_safe["down"] == True
-
-
-    if my_head["x"] == food0["x"] and my_head["y"] - food0["y"] == -1:
-                better_move_safe["up"] == True
-
-    if my_head["x"] == food1["x"] and my_head["y"] - food1["y"] == -1:
-                better_move_safe["up"] == True
-    
-    if my_head["x"] == food2["x"] and my_head["y"] - food2["y"] == -1:
-                better_move_safe["up"] == True
-
-
-    if my_head["x"] - food0["x"] == 1 and my_head["y"] - food0["y"] == 0:
-                better_move_safe["left"] == True
-
-    if my_head["x"] - food1["x"] == 1 and my_head["y"] - food1["y"] == 0:
-                better_move_safe["left"] == True
-    
-    if my_head["x"] - food2["x"] == 1 and my_head["y"] - food2["y"] == 0:
-                better_move_safe["left"] == True
-
-    if my_head["x"] - food0["x"] == -1 and my_head["y"] - food0["y"] == 0:
-                better_move_safe["right"] == True
-
-    if my_head["x"] - food1["x"] == -1 and my_head["y"] - food1["y"] == 0:
-                better_move_safe["right"] == True
-    
-    if my_head["x"] - food2["x"] == -1 and my_head["y"] - food2["y"] == 0:
-                better_move_safe["right"] == True
-
-
-    better_done_count = 0
-
-    if my_health <10:
-        if is_move_safe["down"] == better_move_safe["down"] and better_move_safe["down"] == True:
-            is_move_safe["right"] = False
-            is_move_safe["left"] = False
-            is_move_safe["up"] = False
-            better_done_count = better_done_count + 1
-        
-        elif is_move_safe["up"] == better_move_safe["up"] and better_move_safe["up"] == True and better_done_count == 0:
-            is_move_safe["right"] = False
-            is_move_safe["left"] = False
-            is_move_safe["down"] = False
-            better_done_count = better_done_count + 1
-
-        elif is_move_safe["left"] == better_move_safe["left"] and better_move_safe["left"] == True and better_done_count == 0:
-            is_move_safe["right"] = False
-            is_move_safe["down"] = False
-            is_move_safe["up"] = False
-            better_done_count = better_done_count + 1
-
-        elif is_move_safe["right"] == better_move_safe["right"] and better_move_safe["right"] == True and better_done_count == 0:
-                is_move_safe["down"] = False
-                is_move_safe["left"] = False
-                is_move_safe["up"] = False
 
     #オススメ関数（行くべき場所を判定して，戻り値として基本は一方向を返す）と，安全関数(行って安全な場所を判定して，戻り値として複数方向を返す)をつくって，
     #二つの関数が出した方向が一致すると
