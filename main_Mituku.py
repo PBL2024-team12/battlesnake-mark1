@@ -233,7 +233,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
     def avoid_dead_end(x1,y1,z1,u,d,r,l):
         if z1 ==0:
-            next_left_obstacle_count = next_right_obstacle_count = next_down_obstacle_count = next_up_obstacle_count = 10000000000
+            next_left_obstacle_count = next_right_obstacle_count = next_down_obstacle_count = next_up_obstacle_count = 10000
         else:
             next_left_obstacle_count = next_right_obstacle_count = next_down_obstacle_count = next_up_obstacle_count = 4
         
@@ -514,10 +514,10 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
     if my_health > 10:
         prevent_food(0,0,0)
-        avoid_dead_end(0,0,0)
+        avoid_dead_end(0,0,0,0,0,0,0)
     else:
         if go_to_food() != 1:
-            avoid_dead_end(0,0,0)
+            avoid_dead_end(0,0,0,0,0,0,0)
 
     rather_food_than_border()
     
