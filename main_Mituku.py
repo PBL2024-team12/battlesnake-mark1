@@ -52,27 +52,24 @@ def move(game_state: typing.Dict) -> typing.Dict:
     length_for_tail = game_state["you"]["length"] - 1 #蛇のしっぽの再現のための変数
     my_tail = game_state["you"]["body"][length_for_tail] #蛇のしっぽの先
 
-    def avoid_neck(x1,y1,z1):
-        if my_neck["x"] < my_head["x"] + x1:  # Neck is left of head, don't move left
-            if z1 == 0:
-                is_move_safe["left"] = False
-            else:
-                return 0
-        elif my_neck["x"] > my_head["x"] + x1:  # Neck is right of head, don't move right
-            if z1 == 0:
-                is_move_safe["right"] = False
-            else:
-                return 1
-        elif my_neck["y"] < my_head["y"] + y1:  # Neck is below head, don't move down
-            if z1 == 0:
-                is_move_safe["down"] = False
-            else:
-                return 2
-        elif my_neck["y"] > my_head["y"] + y1:  # Neck is above head, don't move up
-            if z1 == 0:
-                is_move_safe["up"] = False
-            else:
-                return 3
+
+
+    dead_end_counter = 0 #このカウンターで再帰が何回目なのか判断する．
+
+
+
+
+    def avoid_neck(x1,y1,z1):#どのような動きをしても首は固定で一方向制限されるのでカウントする必要がない．
+        if z1 == 0:
+            if my_neck["x"] < my_head["x"] + x1:  # Neck is left of head, don't move left
+                    is_move_safe["left"] = False
+            elif my_neck["x"] > my_head["x"] + x1:  # Neck is right of head, don't move right
+                    is_move_safe["right"] = False
+            elif my_neck["y"] < my_head["y"] + y1:  # Neck is below head, don't move down
+                    is_move_safe["down"] = False
+            elif my_neck["y"] > my_head["y"] + y1:  # Neck is above head, don't move up
+                    is_move_safe["up"] = False
+
     # TODO: Step 1 - Prevent your Battlesnake from moving out of bounds
     # board_width = game_state['board']['width']
     # board_height = game_state['board']['height']
@@ -221,44 +218,46 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
 #短絡的袋小路の回避
 
-    def avoid_dead_end(z):
-        next_left_obstacle_count = next_right_obstacle_count = next_down_obstacle_count = next_up_obstacle_count = 100
+    
+
+    def avoid_dead_end(x1,y1,z1):
+        next_left_obstacle_count = next_right_obstacle_count = next_down_obstacle_count = next_up_obstacle_count = 10000000000
 
         if is_move_safe["left"] == True:
 
             next_left_obstacle_count = 0
 
-            next_left_obstacle_count = next_left_obstacle_count + prevent_bound(-1,0,1) + prevent_itself(-1,0,1)
+            next_left_obstacle_count = next_left_obstacle_count + prevent_bound(x1-1,y1+0,1) + prevent_itself(x1-1,y1+0,1)
 
         if my_health > 10:
-            next_left_obstacle_count = next_left_obstacle_count + prevent_food(-1,0,1)
+            next_left_obstacle_count = next_left_obstacle_count + prevent_food(x1-1,y1+0,1)
 
         if is_move_safe["right"] == True:
                 
             next_right_obstacle_count = 0
 
-            next_right_obstacle_count = next_right_obstacle_count + prevent_bound(1,0,1) + prevent_itself(1,0,1) 
+            next_right_obstacle_count = next_right_obstacle_count + prevent_bound(x1+1,y1+0,1) + prevent_itself(x1+1,y1+0,1) 
 
         if my_health > 10:
-            next_right_obstacle_count = next_right_obstacle_count + prevent_food(1,0,1)
+            next_right_obstacle_count = next_right_obstacle_count + prevent_food(x1+1,y1+0,1)
 
         if is_move_safe["down"] == True:
                 
             next_down_obstacle_count = 0
 
-            next_down_obstacle_count = next_down_obstacle_count + prevent_bound(0,-1,1) + prevent_itself(0,-1,1) 
+            next_down_obstacle_count = next_down_obstacle_count + prevent_bound(x1+0,y1+-1,1) + prevent_itself(x1+0,y1-1,1) 
                 
         if my_health > 10:
-            next_down_obstacle_count = next_down_obstacle_count + prevent_food(0,-1,1)
+            next_down_obstacle_count = next_down_obstacle_count + prevent_food(x1+0,y1-1,1)
 
         if is_move_safe["up"] == True:
                 
             next_up_obstacle_count = 0
 
-            next_up_obstacle_count = next_up_obstacle_count + prevent_bound(0,1,1) + prevent_itself(0,1,1) 
+            next_up_obstacle_count = next_up_obstacle_count + prevent_bound(x1+0,y1+1,1) + prevent_itself(x1+0,y1+1,1) 
 
         if my_health > 10:
-                next_up_obstacle_count = next_up_obstacle_count + prevent_food(0,1,1)
+                next_up_obstacle_count = next_up_obstacle_count + prevent_food(x1+0,y1+1,1)
 
         next_min_count = min(next_left_obstacle_count, next_right_obstacle_count, next_down_obstacle_count, next_up_obstacle_count)
 
@@ -267,7 +266,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
         if next_min_count < 50:
 
             if next_min_count == next_left_obstacle_count:
-                    if z == 0:
+                    if z1 == 0:
                         is_move_safe["right"] = False
                         is_move_safe["down"] = False
                         is_move_safe["up"] = False
@@ -276,7 +275,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
                         return 0
 
             if next_min_count == next_right_obstacle_count and done_count == 0:
-                    if z == 0:
+                    if z1 == 0:
                         is_move_safe["left"] = False
                         is_move_safe["down"] = False
                         is_move_safe["up"] = False
@@ -285,7 +284,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
                         return 1
 
             if next_min_count == next_down_obstacle_count and done_count == 0:
-                    if z == 0:
+                    if z1 == 0:
                         is_move_safe["right"] = False
                         is_move_safe["left"] = False
                         is_move_safe["up"] = False
@@ -294,23 +293,22 @@ def move(game_state: typing.Dict) -> typing.Dict:
                         return 2
 
             if next_min_count == next_up_obstacle_count and done_count == 0:
-                    if z == 0:
+                    if z1 == 0:
                         is_move_safe["right"] = False
                         is_move_safe["down"] = False
                         is_move_safe["left"] = False
                         done_count = 1
                     else:
                         return 3
-
-
+                    
     #餌に向かって動く
+    food0 = game_state["board"]["food"][0]
+    food1 = game_state["board"]["food"][1]
+    food2 = game_state["board"]["food"][2]
+    
     def go_to_food():
         distance_to_food = [0,0,0]
         i = 0
-        food0 = game_state["board"]["food"][0]
-        food1 = game_state["board"]["food"][1]
-        food2 = game_state["board"]["food"][2]
-
         if my_health < 10:
 
             for food in all_food:
@@ -409,8 +407,8 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
     #オススメ関数（行くべき場所を判定して，戻り値として基本は一方向を返す）と，安全関数(行って安全な場所を判定して，戻り値として複数方向を返す)をつくって，
     #二つの関数が出した方向が一致すると
-    #全ての判定にprintを付けて，どこの判定を使用したのか確認できるようにするとデバックできやすくなる．
-    #100ターン先（餌をぎりぎりで取る時）までの行動を再帰的に関数を使って人が要るっぽい
+    #全ての判定にprintを付けて，どこの判定を使用したのか確認できるようにするとデバックしやすくなる．
+    #100ターン先（餌をぎりぎりで取る時）までの行動を再帰的に関数を使っている人が要るっぽい
         
     #実行ゾーン
     avoid_neck(0,0,0)
@@ -421,7 +419,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
     else:
         go_to_food()
     rather_food_than_border()
-    avoid_dead_end(0)
+    avoid_dead_end(0,0,0)
     
 
 
