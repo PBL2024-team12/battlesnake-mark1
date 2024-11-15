@@ -398,25 +398,25 @@ def move(game_state: typing.Dict) -> typing.Dict:
         better_done_count = 0
 
         if my_health <10:
-            if is_move_safe["down"] == better_move_safe["down"] and better_move_safe["down"] == True:
+            if is_move_safe["down"] == True and better_move_safe["down"] == True:
                 is_move_safe["right"] = False
                 is_move_safe["left"] = False
                 is_move_safe["up"] = False
                 better_done_count = better_done_count + 1
         
-            elif is_move_safe["up"] == better_move_safe["up"] and better_move_safe["up"] == True and better_done_count == 0:
+            elif is_move_safe["up"] == True and better_move_safe["up"] == True and better_done_count == 0:
                 is_move_safe["right"] = False
                 is_move_safe["left"] = False
                 is_move_safe["down"] = False
                 better_done_count = better_done_count + 1
 
-            elif is_move_safe["left"] == better_move_safe["left"] and better_move_safe["left"] == True and better_done_count == 0:
+            elif is_move_safe["left"] == True and better_move_safe["left"] == True and better_done_count == 0:
                 is_move_safe["right"] = False
                 is_move_safe["down"] = False
                 is_move_safe["up"] = False
                 better_done_count = better_done_count + 1
 
-            elif is_move_safe["right"] == better_move_safe["right"] and better_move_safe["right"] == True and better_done_count == 0:
+            elif is_move_safe["right"] == True and better_move_safe["right"] == True and better_done_count == 0:
                 is_move_safe["down"] = False
                 is_move_safe["left"] = False
                 is_move_safe["up"] = False
