@@ -129,7 +129,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
         global pop_counter 
         if pop_counter == 0:
             cutted_my_tail = my_body.pop()  
-            pop_counter = pop_counter + 1                          
+            pop_counter = 1                          
         itself_count = 0
     
         for body in my_body:
