@@ -231,14 +231,20 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
     
 
-    def avoid_dead_end(x1,y1,z1):
-        next_left_obstacle_count = next_right_obstacle_count = next_down_obstacle_count = next_up_obstacle_count = 10000000000
-
+    def avoid_dead_end(x1,y1,z1,u,d,r,l):
+        if z1 ==0:
+            next_left_obstacle_count = next_right_obstacle_count = next_down_obstacle_count = next_up_obstacle_count = 10000000000
+        else:
+            next_left_obstacle_count = next_right_obstacle_count = next_down_obstacle_count = next_up_obstacle_count = 4
+        
         if is_move_safe["left"] == True:
 
             next_left_obstacle_count = 0
 
             next_left_obstacle_count = next_left_obstacle_count + prevent_bound(x1-1,y1+0,1) + prevent_itself(x1-1,y1+0,1)
+            
+            if z1 == 0:
+                next_left_obstacle_count = next_left_obstacle_count + avoid_dead_end(-1,0,1,1,0,0,0) + avoid_dead_end(-1,0,1,0,1,0,0) + avoid_dead_end(-1,0,1,0,0,1,0) + avoid_dead_end(-1,0,1,0,0,0,1)
 
         if my_health > 10:
             next_left_obstacle_count = next_left_obstacle_count + prevent_food(x1-1,y1+0,1)
@@ -249,6 +255,9 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
             next_right_obstacle_count = next_right_obstacle_count + prevent_bound(x1+1,y1+0,1) + prevent_itself(x1+1,y1+0,1) 
 
+            if z1 == 0:
+                next_right_obstacle_count = next_right_obstacle_count + avoid_dead_end(1,0,1,1,0,0,0) + avoid_dead_end(1,0,1,0,1,0,0) + avoid_dead_end(1,0,1,0,0,1,0) + avoid_dead_end(1,0,1,0,0,0,1)
+
         if my_health > 10:
             next_right_obstacle_count = next_right_obstacle_count + prevent_food(x1+1,y1+0,1)
 
@@ -257,6 +266,9 @@ def move(game_state: typing.Dict) -> typing.Dict:
             next_down_obstacle_count = 0
 
             next_down_obstacle_count = next_down_obstacle_count + prevent_bound(x1+0,y1+-1,1) + prevent_itself(x1+0,y1-1,1) 
+
+            if z1 == 0:
+                next_down_obstacle_count = next_down_obstacle_count + avoid_dead_end(0,-1,1,1,0,0,0) + avoid_dead_end(0,-1,1,0,1,0,0) + avoid_dead_end(0,-1,1,0,0,1,0) + avoid_dead_end(0,-1,1,0,0,0,1)
                 
         if my_health > 10:
             next_down_obstacle_count = next_down_obstacle_count + prevent_food(x1+0,y1-1,1)
@@ -267,6 +279,9 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
             next_up_obstacle_count = next_up_obstacle_count + prevent_bound(x1+0,y1+1,1) + prevent_itself(x1+0,y1+1,1) 
 
+            if z1 == 0:
+                next_up_obstacle_count = next_up_obstacle_count + avoid_dead_end(0,1,1,1,0,0,0) + avoid_dead_end(0,1,1,0,1,0,0) + avoid_dead_end(0,1,1,0,0,1,0) + avoid_dead_end(0,1,1,0,0,0,1)
+
         if my_health > 10:
                 next_up_obstacle_count = next_up_obstacle_count + prevent_food(x1+0,y1+1,1)
 
@@ -274,44 +289,41 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
         done_count = 0
 
+        if z1 == 0:
+            if next_min_count < 10000:
+        
+                if next_min_count == next_left_obstacle_count:
+                        is_move_safe["right"] = False
+                        is_move_safe["down"] = False
+                        is_move_safe["up"] = False
+                        done_count = 1
 
-        if next_min_count < 50:
+                if next_min_count == next_right_obstacle_count and done_count == 0:
+                        is_move_safe["left"] = False
+                        is_move_safe["down"] = False
+                        is_move_safe["up"] = False
+                        done_count = 1
 
-            if next_min_count == next_left_obstacle_count:
-                if z1 == 0:
-                    is_move_safe["right"] = False
-                    is_move_safe["down"] = False
-                    is_move_safe["up"] = False
-                    done_count = 1
-                else:
-                    return 0
+                if next_min_count == next_down_obstacle_count and done_count == 0:
+                        is_move_safe["right"] = False
+                        is_move_safe["left"] = False
+                        is_move_safe["up"] = False
+                        done_count = 1
 
-            if next_min_count == next_right_obstacle_count and done_count == 0:
-                if z1 == 0:
-                    is_move_safe["left"] = False
-                    is_move_safe["down"] = False
-                    is_move_safe["up"] = False
-                    done_count = 1
-                else:
-                    return 1
-
-            if next_min_count == next_down_obstacle_count and done_count == 0:
-                if z1 == 0:
-                    is_move_safe["right"] = False
-                    is_move_safe["left"] = False
-                    is_move_safe["up"] = False
-                    done_count = 1
-                else:
-                    return 2
-
-            if next_min_count == next_up_obstacle_count and done_count == 0:
-                if z1 == 0:
-                    is_move_safe["right"] = False
-                    is_move_safe["down"] = False
-                    is_move_safe["left"] = False
-                    done_count = 1
-                else:
-                     return 3
+                if next_min_count == next_up_obstacle_count and done_count == 0:
+                        is_move_safe["right"] = False
+                        is_move_safe["down"] = False
+                        is_move_safe["left"] = False
+                        done_count = 1
+        if d == 1:
+            return next_down_obstacle_count
+        elif u == 1:
+            return next_up_obstacle_count
+        elif r == 1:
+            return next_right_obstacle_count
+        elif l == 1:
+            return next_left_obstacle_count
+ 
                     
     #餌に向かって動く
     recom={"up":False, "down":False, "left":False,"right":False}
