@@ -284,16 +284,16 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
     if is_move_safe["left"] == True:
 
-    next_left_obstacle_count = 0
+        next_left_obstacle_count = 0
 
-    next_left_obstacle_count = next_left_obstacle_count + prevent_bound(-1,0,1) + prevent_itself(-1,0,1)
+        next_left_obstacle_count = next_left_obstacle_count + prevent_bound(-1,0,1) + prevent_itself(-1,0,1)
 
     if my_health > 10:
         next_left_obstacle_count = next_left_obstacle_count + prevent_food(-1,0,1)
 
     if is_move_safe["right"] == True:
             
-         next_right_obstacle_count = 0
+        next_right_obstacle_count = 0
 
         next_right_obstacle_count = next_right_obstacle_count + prevent_bound(1,0,1) + prevent_itself(1,0,1) 
 
