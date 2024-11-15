@@ -322,7 +322,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
         recom["up"] = False
         recom["left"] = False
         recom["right"] = False
-
+        next_to_food = 0 #餌が隣にあったら1
         distance_to_food = [0,0,0]
         i = 0
         if my_health < 10:
@@ -353,28 +353,28 @@ def move(game_state: typing.Dict) -> typing.Dict:
                     recom["up"] = False
                     recom["left"] = False
                     recom["right"] = False
-                    return 1
+                    next_to_food = 1
 
                 elif my_head["x"] - food0["x"] == 0 and my_head["y"] - food0["y"] == -1:
                     recom["down"] = False
                     recom["up"] = True
                     recom["left"] = False
                     recom["right"] = False
-                    return 1
+                    next_to_food = 1
 
                 if my_head["x"] - food0["x"] == 1 and my_head["y"] - food0["y"] == 0:
                     recom["down"] = False
                     recom["up"] = False
                     recom["left"] = True
                     recom["right"] = False
-                    return 1
+                    next_to_food = 1
 
                 elif my_head["x"] - food0["x"] == -1 and my_head["y"] - food0["y"] == 0:
                     recom["down"] = False
                     recom["up"] = False
                     recom["left"] = False
                     recom["right"] = True
-                    return 1
+                    next_to_food = 1
 
                 fd_count = fd_count + 1
 
@@ -397,28 +397,28 @@ def move(game_state: typing.Dict) -> typing.Dict:
                     recom["up"] = False
                     recom["left"] = False
                     recom["right"] = False
-                    return 1
+                    next_to_food = 1
 
                 elif my_head["x"] - food1["x"] == 0 and my_head["y"] - food1["y"] == -1:
                     recom["down"] = False
                     recom["up"] = True
                     recom["left"] = False
                     recom["right"] = False
-                    return 1
+                    next_to_food = 1
 
                 if my_head["x"] - food1["x"] == 1 and my_head["y"] - food1["y"] == 0:
                     recom["down"] = False
                     recom["up"] = False
                     recom["left"] = True
                     recom["right"] = False
-                    return 1
+                    next_to_food = 1
 
                 elif my_head["x"] - food1["x"] == -1 and my_head["y"] - food1["y"] == 0:
                     recom["down"] = False
                     recom["up"] = False
                     recom["left"] = False
                     recom["right"] = True
-                    return 1
+                    next_to_food = 1
 
                 fd_count = fd_count + 1
 
@@ -442,28 +442,28 @@ def move(game_state: typing.Dict) -> typing.Dict:
                     recom["up"] = False
                     recom["left"] = False
                     recom["right"] = False
-                    return 1
+                    next_to_food = 1
 
                 elif my_head["x"] - food2["x"] == 0 and my_head["y"] - food2["y"] == -1:
                     recom["down"] = False
                     recom["up"] = True
                     recom["left"] = False
                     recom["right"] = False
-                    return 1
+                    next_to_food = 1
 
                 if my_head["x"] - food2["x"] == 1 and my_head["y"] - food2["y"] == 0:
                     recom["down"] = False
                     recom["up"] = False
                     recom["left"] = True
                     recom["right"] = False
-                    return 1
+                    next_to_food = 1
 
                 elif my_head["x"] - food2["x"] == -1 and my_head["y"] - food2["y"] == 0:
                     recom["down"] = False
                     recom["up"] = False
                     recom["left"] = False
                     recom["right"] = True
-                    return 1
+                    next_to_food = 1
 
                 fd_count = fd_count + 1
 
@@ -486,7 +486,9 @@ def move(game_state: typing.Dict) -> typing.Dict:
             is_move_safe["down"] = False
             is_move_safe["up"] = False
             is_move_safe["left"] = False
-    
+
+        if next_to_food == 1:
+            return 1
 
     #オススメ関数（行くべき場所を判定して，戻り値として基本は一方向を返す）と，安全関数(行って安全な場所を判定して，戻り値として複数方向を返す)をつくって，
     #二つの関数が出した方向が一致すると
@@ -497,12 +499,14 @@ def move(game_state: typing.Dict) -> typing.Dict:
     avoid_neck(0,0,0)
     prevent_bound(0,0,0)
     prevent_itself(0,0,0)
+
     if my_health > 10:
         prevent_food(0,0,0)
         avoid_dead_end(0,0,0)
     else:
         if go_to_food() != 1:
             avoid_dead_end(0,0,0)
+
     rather_food_than_border()
     
     
