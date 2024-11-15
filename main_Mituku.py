@@ -213,6 +213,91 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
     opponents = game_state['board']['snakes']
 
+#短絡的袋小路の回避
+
+    def avoid_dead_end(z):
+        next_left_obstacle_count = next_right_obstacle_count = next_down_obstacle_count = next_up_obstacle_count = 100
+
+        if is_move_safe["left"] == True:
+
+            next_left_obstacle_count = 0
+
+            next_left_obstacle_count = next_left_obstacle_count + prevent_bound(-1,0,1) + prevent_itself(-1,0,1)
+
+        if my_health > 10:
+            next_left_obstacle_count = next_left_obstacle_count + prevent_food(-1,0,1)
+
+        if is_move_safe["right"] == True:
+                
+            next_right_obstacle_count = 0
+
+            next_right_obstacle_count = next_right_obstacle_count + prevent_bound(1,0,1) + prevent_itself(1,0,1) 
+
+        if my_health > 10:
+            next_right_obstacle_count = next_right_obstacle_count + prevent_food(1,0,1)
+
+        if is_move_safe["down"] == True:
+                
+            next_down_obstacle_count = 0
+
+            next_down_obstacle_count = next_down_obstacle_count + prevent_bound(0,-1,1) + prevent_itself(0,-1,1) 
+                
+        if my_health > 10:
+            next_down_obstacle_count = next_down_obstacle_count + prevent_food(0,-1,1)
+
+        if is_move_safe["up"] == True:
+                
+            next_up_obstacle_count = 0
+
+            next_up_obstacle_count = next_up_obstacle_count + prevent_bound(0,1,1) + prevent_itself(0,1,1) 
+
+        if my_health > 10:
+                next_up_obstacle_count = next_up_obstacle_count + prevent_food(0,1,1)
+
+        next_min_count = min(next_left_obstacle_count, next_right_obstacle_count, next_down_obstacle_count, next_up_obstacle_count)
+
+        done_count = 0
+
+        if next_min_count < 50:
+
+            if next_min_count == next_left_obstacle_count:
+                    if z == 0:
+                        is_move_safe["right"] = False
+                        is_move_safe["down"] = False
+                        is_move_safe["up"] = False
+                        done_count = 1
+                    else:
+                        return 0
+
+            if next_min_count == next_right_obstacle_count and done_count == 0:
+                    if z == 0:
+                        is_move_safe["left"] = False
+                        is_move_safe["down"] = False
+                        is_move_safe["up"] = False
+                        done_count = 1
+                    else:
+                        return 1
+
+            if next_min_count == next_down_obstacle_count and done_count == 0:
+                    if z == 0:
+                        is_move_safe["right"] = False
+                        is_move_safe["left"] = False
+                        is_move_safe["up"] = False
+                        done_count = 1
+                    else:
+                        return 2
+
+            if next_min_count == next_up_obstacle_count and done_count == 0:
+                    if z == 0:
+                        is_move_safe["right"] = False
+                        is_move_safe["down"] = False
+                        is_move_safe["left"] = False
+                        done_count = 1
+                    else:
+                        return 3
+
+    avoid_dead_end(0)
+
     #餌に向かって動く
     distance_to_food = [0,0,0]
     i = 0
@@ -273,11 +358,12 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
             if my_head["x"] - food1["x"] == 0 and my_head["y"] - food1["y"] == 1 and is_move_safe["down"] == True and is_move_safe["up"] == True:
                 is_move_safe["up"] = False
+                
 
             elif my_head["x"] - food1["x"] == 0 and my_head["y"] - food1["y"] == -1 and is_move_safe["down"] == True and is_move_safe["up"] == True:
                 is_move_safe["down"] = False
 
-            if my_head["x"] - food1["x"] == 1 and my_head["y"] - food1["y"] == 0 and is_move_safe["right"] == True and is_move_safe["keft"] == True:
+            if my_head["x"] - food1["x"] == 1 and my_head["y"] - food1["y"] == 0 and is_move_safe["right"] == True and is_move_safe["left"] == True:
                 is_move_safe["right"] = False
 
             elif my_head["x"] - food1["x"] == -1 and my_head["y"] - food1["y"] == 0 and is_move_safe["right"] == True and is_move_safe["left"] == True:
@@ -313,77 +399,6 @@ def move(game_state: typing.Dict) -> typing.Dict:
                 is_move_safe["left"] = False
 
     
-    #短絡的袋小路の回避
-    
-    next_left_obstacle_count = next_right_obstacle_count = next_down_obstacle_count = next_up_obstacle_count = 100
-
-    if is_move_safe["left"] == True:
-
-        next_left_obstacle_count = 0
-
-        next_left_obstacle_count = next_left_obstacle_count + prevent_bound(-1,0,1) + prevent_itself(-1,0,1)
-
-    if my_health > 10:
-        next_left_obstacle_count = next_left_obstacle_count + prevent_food(-1,0,1)
-
-    if is_move_safe["right"] == True:
-            
-        next_right_obstacle_count = 0
-
-        next_right_obstacle_count = next_right_obstacle_count + prevent_bound(1,0,1) + prevent_itself(1,0,1) 
-
-    if my_health > 10:
-        next_right_obstacle_count = next_right_obstacle_count + prevent_food(1,0,1)
-
-    if is_move_safe["down"] == True:
-            
-        next_down_obstacle_count = 0
-
-        next_down_obstacle_count = next_down_obstacle_count + prevent_bound(0,-1,1) + prevent_itself(0,-1,1) 
-            
-    if my_health > 10:
-        next_down_obstacle_count = next_down_obstacle_count + prevent_food(0,-1,1)
-
-    if is_move_safe["up"] == True:
-            
-        next_up_obstacle_count = 0
-
-        next_up_obstacle_count = next_up_obstacle_count + prevent_bound(0,1,1) + prevent_itself(0,1,1) 
-
-    if my_health > 10:
-            next_up_obstacle_count = next_up_obstacle_count + prevent_food(0,1,1)
-
-    next_min_count = min(next_left_obstacle_count, next_right_obstacle_count, next_down_obstacle_count, next_up_obstacle_count)
-
-    done_count = 0
-
-    if next_min_count < 50:
-
-        if next_min_count == next_left_obstacle_count:
-                is_move_safe["right"] = False
-                is_move_safe["down"] = False
-                is_move_safe["up"] = False
-                done_count = 1
-
-        if next_min_count == next_right_obstacle_count and done_count == 0:
-                is_move_safe["left"] = False
-                is_move_safe["down"] = False
-                is_move_safe["up"] = False
-                done_count = 1
-
-
-        if next_min_count == next_down_obstacle_count and done_count == 0:
-                is_move_safe["right"] = False
-                is_move_safe["left"] = False
-                is_move_safe["up"] = False
-                done_count = 1
-
-        if next_min_count == next_up_obstacle_count and done_count == 0:
-                is_move_safe["right"] = False
-                is_move_safe["down"] = False
-                is_move_safe["left"] = False
-                done_count = 1
-
     
 
     #オススメ関数（行くべき場所を判定して，戻り値として基本は一方向を返す）と，安全関数(行って安全な場所を判定して，戻り値として複数方向を返す)をつくって，
