@@ -274,54 +274,44 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
         done_count = 0
 
-        if d == 1:
-            return next_down_obstacle_count
-        elif u == 1:
-            return next_up_obstacle_count
-        elif r == 1:
-            return next_right_obstacle_count
-        elif l == 1:
-            return next_left_obstacle_count
-        
-        else:
 
-            if next_min_count < 50:
+        if next_min_count < 50:
 
-                if next_min_count == next_left_obstacle_count:
-                        if z1 == 0:
-                            is_move_safe["right"] = False
-                            is_move_safe["down"] = False
-                            is_move_safe["up"] = False
-                            done_count = 1
-                        else:
-                            return 0
+            if next_min_count == next_left_obstacle_count:
+                if z1 == 0:
+                    is_move_safe["right"] = False
+                    is_move_safe["down"] = False
+                    is_move_safe["up"] = False
+                    done_count = 1
+                else:
+                    return 0
 
-                if next_min_count == next_right_obstacle_count and done_count == 0:
-                        if z1 == 0:
-                            is_move_safe["left"] = False
-                            is_move_safe["down"] = False
-                            is_move_safe["up"] = False
-                            done_count = 1
-                        else:
-                            return 1
+            if next_min_count == next_right_obstacle_count and done_count == 0:
+                if z1 == 0:
+                    is_move_safe["left"] = False
+                    is_move_safe["down"] = False
+                    is_move_safe["up"] = False
+                    done_count = 1
+                else:
+                    return 1
 
-                if next_min_count == next_down_obstacle_count and done_count == 0:
-                        if z1 == 0:
-                            is_move_safe["right"] = False
-                            is_move_safe["left"] = False
-                            is_move_safe["up"] = False
-                            done_count = 1
-                        else:
-                            return 2
+            if next_min_count == next_down_obstacle_count and done_count == 0:
+                if z1 == 0:
+                    is_move_safe["right"] = False
+                    is_move_safe["left"] = False
+                    is_move_safe["up"] = False
+                    done_count = 1
+                else:
+                    return 2
 
-                if next_min_count == next_up_obstacle_count and done_count == 0:
-                        if z1 == 0:
-                            is_move_safe["right"] = False
-                            is_move_safe["down"] = False
-                            is_move_safe["left"] = False
-                            done_count = 1
-                        else:
-                            return 3
+            if next_min_count == next_up_obstacle_count and done_count == 0:
+                if z1 == 0:
+                    is_move_safe["right"] = False
+                    is_move_safe["down"] = False
+                    is_move_safe["left"] = False
+                    done_count = 1
+                else:
+                     return 3
                     
     #餌に向かって動く
     recom={"up":False, "down":False, "left":False,"right":False}
