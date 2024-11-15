@@ -324,30 +324,30 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
     if next_min_count < 50:
 
-    if next_min_count == next_left_obstacle_count:
-            is_move_safe["right"] = False
-            is_move_safe["down"] = False
-            is_move_safe["up"] = False
-            done_count = 1
+        if next_min_count == next_left_obstacle_count:
+                is_move_safe["right"] = False
+                is_move_safe["down"] = False
+                is_move_safe["up"] = False
+                done_count = 1
 
-    if next_min_count == next_right_obstacle_count and done_count == 0:
-            is_move_safe["left"] = False
-            is_move_safe["down"] = False
-            is_move_safe["up"] = False
-            done_count = 1
+        if next_min_count == next_right_obstacle_count and done_count == 0:
+                is_move_safe["left"] = False
+                is_move_safe["down"] = False
+                is_move_safe["up"] = False
+                done_count = 1
 
 
-    if next_min_count == next_down_obstacle_count and done_count == 0:
-            is_move_safe["right"] = False
-            is_move_safe["left"] = False
-            is_move_safe["up"] = False
-            done_count = 1
+        if next_min_count == next_down_obstacle_count and done_count == 0:
+                is_move_safe["right"] = False
+                is_move_safe["left"] = False
+                is_move_safe["up"] = False
+                done_count = 1
 
-    if next_min_count == next_up_obstacle_count and done_count == 0:
-            is_move_safe["right"] = False
-            is_move_safe["down"] = False
-            is_move_safe["left"] = False
-            done_count = 1
+        if next_min_count == next_up_obstacle_count and done_count == 0:
+                is_move_safe["right"] = False
+                is_move_safe["down"] = False
+                is_move_safe["left"] = False
+                done_count = 1
 
     #より良い動き
     better_move_safe = {"up": False, "down": False, "left": False, "right": False}
