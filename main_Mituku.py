@@ -516,7 +516,8 @@ def move(game_state: typing.Dict) -> typing.Dict:
     prevent_itself(0,0,0)
 
     if my_health > 10:
-        prevent_food(0,0,0)
+        if game_state["turn"] <700:
+            prevent_food(0,0,0)
         avoid_dead_end(0,0,0,0,0,0,0)
     else:
         if go_to_food() != 1:
