@@ -246,8 +246,8 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
             next_left_obstacle_count = next_left_obstacle_count + prevent_bound(x1-1,y1,1) + prevent_itself(x1-1,y1,1)
             
-            if z1 == 0:
-                next_left_obstacle_count = next_left_obstacle_count + avoid_dead_end(-1,0,1,1,0,0,0) + avoid_dead_end(-1,0,1,0,1,0,0) + avoid_dead_end(-1,0,1,0,0,1,0) + avoid_dead_end(-1,0,1,0,0,0,1)
+            #if z1 == 0:
+                #next_left_obstacle_count = next_left_obstacle_count + avoid_dead_end(-1,0,1,1,0,0,0) + avoid_dead_end(-1,0,1,0,1,0,0) + avoid_dead_end(-1,0,1,0,0,1,0) + avoid_dead_end(-1,0,1,0,0,0,1)
 
         if my_health > 10:
             next_left_obstacle_count = next_left_obstacle_count + prevent_food(x1-1,y1,1)
@@ -258,8 +258,8 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
             next_right_obstacle_count = next_right_obstacle_count + prevent_bound(x1+1,y1,1) + prevent_itself(x1+1,y1,1) 
 
-            if z1 == 0:
-                next_right_obstacle_count = next_right_obstacle_count + avoid_dead_end(1,0,1,1,0,0,0) + avoid_dead_end(1,0,1,0,1,0,0) + avoid_dead_end(1,0,1,0,0,1,0) + avoid_dead_end(1,0,1,0,0,0,1)
+            #if z1 == 0:
+                #next_right_obstacle_count = next_right_obstacle_count + avoid_dead_end(1,0,1,1,0,0,0) + avoid_dead_end(1,0,1,0,1,0,0) + avoid_dead_end(1,0,1,0,0,1,0) + avoid_dead_end(1,0,1,0,0,0,1)
 
         if my_health > 10:
             next_right_obstacle_count = next_right_obstacle_count + prevent_food(x1+1,y1,1)
@@ -270,8 +270,8 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
             next_down_obstacle_count = next_down_obstacle_count + prevent_bound(x1,y1+-1,1) + prevent_itself(x1,y1-1,1) 
 
-            if z1 == 0:
-                next_down_obstacle_count = next_down_obstacle_count + avoid_dead_end(0,-1,1,1,0,0,0) + avoid_dead_end(0,-1,1,0,1,0,0) + avoid_dead_end(0,-1,1,0,0,1,0) + avoid_dead_end(0,-1,1,0,0,0,1)
+            #if z1 == 0:
+                #next_down_obstacle_count = next_down_obstacle_count + avoid_dead_end(0,-1,1,1,0,0,0) + avoid_dead_end(0,-1,1,0,1,0,0) + avoid_dead_end(0,-1,1,0,0,1,0) + avoid_dead_end(0,-1,1,0,0,0,1)
                 
         if my_health > 10:
             next_down_obstacle_count = next_down_obstacle_count + prevent_food(x1,y1-1,1)
@@ -282,8 +282,8 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
             next_up_obstacle_count = next_up_obstacle_count + prevent_bound(x1,y1+1,1) + prevent_itself(x1,y1+1,1) 
 
-            if z1 == 0:
-                next_up_obstacle_count = next_up_obstacle_count + avoid_dead_end(0,1,1,1,0,0,0) + avoid_dead_end(0,1,1,0,1,0,0) + avoid_dead_end(0,1,1,0,0,1,0) + avoid_dead_end(0,1,1,0,0,0,1)
+            #if z1 == 0:
+                #next_up_obstacle_count = next_up_obstacle_count + avoid_dead_end(0,1,1,1,0,0,0) + avoid_dead_end(0,1,1,0,1,0,0) + avoid_dead_end(0,1,1,0,0,1,0) + avoid_dead_end(0,1,1,0,0,0,1)
 
         if my_health > 10:
                 next_up_obstacle_count = next_up_obstacle_count + prevent_food(x1,y1+1,1)
