@@ -68,7 +68,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
         next_move = path[0]
     else:
         # 食べ物を避ける経路が見つからなかった場合、一旦は食べ物を食べるとして、そのあとに食べ物を避ける空間が広い方向に進む
-        next_move = random.choice(directions_which_has_biggest_room(field_scale, body, foods))
+        next_move = ""
     
     next_position = body[0].copy()
     if next_move == "up":
@@ -80,26 +80,108 @@ def move(game_state: typing.Dict) -> typing.Dict:
     elif next_move == "right":
         next_position["x"] += 1
     
-    # 次の場所から食べ物を目指すことができるか
-    able_to_reach_food = False
+    # 食べた後に死ににくいような食べ物を選ぶ
+    foods_sorted_with_chance_of_live = []
     for food in foods:
-        additional_distance = 8
+        number_of_ways_from_food = 0
+        number_of_ways_from_food_without_food = 0
+        ways_count_temp = []
+        ways_count_temp_without_food = []
+        place_used = []
+        for direction_from_food in ["up", "down", "left", "right"]:
+            number_of_ways_from_food_temp = 0
+            number_of_ways_from_food_without_food_temp = 0
+            next = food.copy()
+            if direction_from_food == "up":
+                next["y"] += 1
+            elif direction_from_food == "down":
+                next["y"] -= 1
+            elif direction_from_food == "left":
+                next["x"] -= 1
+            elif direction_from_food == "right":
+                next["x"] += 1
+            if next["x"] < 0 or next["x"] >= field_scale[0] or next["y"] < 0 or next["y"] >= field_scale[1]:
+                continue
+            if next in body[1:]:
+                continue
+            for direction_from_next in ["up", "down", "left", "right"]:
+                next_next = next.copy()
+                if direction_from_next == "up":
+                    next_next["y"] += 1
+                elif direction_from_next == "down":
+                    next_next["y"] -= 1
+                elif direction_from_next == "left":
+                    next_next["x"] -= 1
+                elif direction_from_next == "right":
+                    next_next["x"] += 1
+                if next_next["x"] < 0 or next_next["x"] >= field_scale[0] or next_next["y"] < 0 or next_next["y"] >= field_scale[1]:
+                    continue
+                if next_next not in body[1:] and next_next not in place_used:
+                    number_of_ways_from_food_temp += 1
+                    place_used.append(next_next)
+                    if next not in foods and next_next not in foods:
+                        number_of_ways_from_food_without_food_temp += 1
+                    continue
+            ways_count_temp.append(number_of_ways_from_food_temp)
+            ways_count_temp_without_food.append(number_of_ways_from_food_without_food_temp)
+        for index in range(0, len(ways_count_temp)):
+            if index != 0:
+                number_of_ways_from_food += ways_count_temp[index]
+        for index in range(0, len(ways_count_temp_without_food)):
+            if index != 0:
+                number_of_ways_from_food_without_food += ways_count_temp_without_food[index]
+        
+        food_data = {"food": food, "chance_of_live": number_of_ways_from_food or 0, "chance_without_food": number_of_ways_from_food_without_food or 0}
+        
+        if len(foods_sorted_with_chance_of_live) < 1:
+            foods_sorted_with_chance_of_live.append(food_data)
+        else:
+            inserted = False
+            for index in range(0, len(foods_sorted_with_chance_of_live)):
+                if number_of_ways_from_food_without_food > foods_sorted_with_chance_of_live[index]["chance_without_food"]:
+                    foods_sorted_with_chance_of_live.insert(index, food_data)
+                    inserted = True
+                    break
+            if not inserted:
+                foods_sorted_with_chance_of_live.append(food_data)
+    edible_foods_avoid_food = []
+    for food in foods_sorted_with_chance_of_live:
+        if food["chance_without_food"] != 0:
+            edible_foods_avoid_food.append(food["food"])
 
-        short_body = body[:-1].copy()
-        short_body.insert(0, next_position)
-        shortest_path_for_food = find_shortest_path(field_scale, short_body, [], food)
-        if shortest_path_for_food is not None and len(shortest_path_for_food) < game_state["you"]["health"] - 1 - additional_distance:
-            able_to_reach_food = True
-            break
-    print(f"able_to_reach_food: {able_to_reach_food}")
+    edible_foods_avoid_death = []
+    for food in foods_sorted_with_chance_of_live:
+        if food["chance_of_live"] != 0:
+            edible_foods_avoid_death.append(food["food"])
+
+    print(f"edible_foods_avoid_food: {edible_foods_avoid_food}")
     end_process_time = time.perf_counter()
     print('process time: {:.2f}ms'.format((end_process_time - start_process_time)*1000))
-    # もし次の場所から食べ物を目指せないのであれば、たどり着ける中で最も遠い食べ物を目指す。
-    if not able_to_reach_food:
+
+    food_reachable = False
+    if next_move != "":
+        # 次の場所から食べ物を目指すことができるか
+        if len(edible_foods_avoid_food) > 0:
+            food_to_eat = edible_foods_avoid_food[0]
+        elif len(edible_foods_avoid_death) > 0:
+            food_to_eat = edible_foods_avoid_death[0]
+        else: 
+            food_to_eat = foods[0]
+
+        next_body = body[:-1].copy()
+        next_body.insert(0, next_position)
+        shortest_path_for_food = find_shortest_path(field_scale, next_body, [], food_to_eat)
+        if shortest_path_for_food is not None and len(shortest_path_for_food) < game_state["you"]["health"] - 1:
+            food_reachable = True
+        print(f"food_reachable: {food_reachable}")
+        end_process_time = time.perf_counter()
+        print('process time: {:.2f}ms'.format((end_process_time - start_process_time)*1000))
+    # もし次の場所から遠い食べ物を目指せないのであれば、たどり着ける中で最も遠い食べ物を目指す。
+    if next_move == "" or not food_reachable:
         next_move = ""
         longest_path_for_food = []
         longest_distance_for_food = 0
-        for food in foods:
+        for food in edible_foods_avoid_food:
             path_for_food = find_shortest_path(field_scale, body, foods, food)
             if path_for_food is not None and len(path_for_food) < game_state["you"]["health"]:
                 if len(path_for_food) > longest_distance_for_food:
@@ -109,7 +191,21 @@ def move(game_state: typing.Dict) -> typing.Dict:
         if longest_distance_for_food > 0:
             next_move = longest_path_for_food[0]
         else:
-            next_move = random.choice(directions_which_has_biggest_room(field_scale, body, []))
+            for food in edible_foods_avoid_death:
+                path_for_food = find_shortest_path(field_scale, body, foods, food)
+                if path_for_food is not None and len(path_for_food) < game_state["you"]["health"]:
+                    if len(path_for_food) > longest_distance_for_food:
+                        longest_distance_for_food = len(path_for_food)
+                        longest_path_for_food = path_for_food
+                    continue
+            if longest_distance_for_food > 0:
+                next_move = longest_path_for_food[0]
+            else:
+                biggest_room = directions_which_has_biggest_room(field_scale, body, foods)
+                if biggest_room is not None and len(biggest_room) > 0:
+                    next_move = random.choice(biggest_room)
+                else:
+                    next_move = choose_direction_try_to_avoid_obstacles(field_scale, body, foods)
 
     print(f"MOVE {game_state['turn']}: {next_move}")
     end_process_time = time.perf_counter()
@@ -154,10 +250,13 @@ def find_shortest_path(field_scale, body, obstacles, target):
             body_len = len(body)
             if body_len > distance[str(current)] + 1:
                 if need_care_for_tail:
-                    body_to_care = body[0:-distance[str(current)]]
+                    if distance[str(current)] < 1:
+                        body_to_care = body
+                    else:
+                        body_to_care = body[0:-distance[str(current)]]
                 else:
                     body_to_care = body[0:-distance[str(current)] - 1]
-                if next in body[0:-distance[str(current)] - 1]:
+                if next in body_to_care:
                     continue
 
             # ゴールに到達したら経路を返す
@@ -182,7 +281,8 @@ def find_shortest_path(field_scale, body, obstacles, target):
 
 # 食べ物を避ける経路を返す。
 def find_avoid_food_path(field_scale, body, obstacles):
-    for body_part in body:
+#    for body_part in [body[-1], body[0]]:
+    for body_part in [body[-1]]:
         path = find_shortest_path(field_scale, body, obstacles, body_part)
         if path is not None and len(path) > 0:
             return path
@@ -259,6 +359,51 @@ def directions_which_has_biggest_room(field_scale, body, obstacles):
         elif room == biggest_room:
             directions.append(direction)
     return directions
+
+def choose_direction_try_to_avoid_obstacles(field_scale, body, obstacles):
+    directions = ["up", "down", "left", "right"]
+    valid_directions = []
+
+    for direction in directions:
+        next_position = body[0].copy()
+        if direction == "up":
+            next_position["y"] += 1
+        elif direction == "down":
+            next_position["y"] -= 1
+        elif direction == "left":
+            next_position["x"] -= 1
+        elif direction == "right":
+            next_position["x"] += 1
+
+        if next_position["x"] < 0 or next_position["x"] >= field_scale[0] or next_position["y"] < 0 or next_position["y"] >= field_scale[1]:
+            continue
+        if next_position not in obstacles and next_position not in body:
+            valid_directions.append(direction)
+
+    if valid_directions:
+        return random.choice(valid_directions)
+
+    for direction in directions:
+        next_position = body[0].copy()
+        if direction == "up":
+            next_position["y"] += 1
+        elif direction == "down":
+            next_position["y"] -= 1
+        elif direction == "left":
+            next_position["x"] -= 1
+        elif direction == "right":
+            next_position["x"] += 1
+
+        if next_position["x"] < 0 or next_position["x"] >= field_scale[0] or next_position["y"] < 0 or next_position["y"] >= field_scale[1]:
+            continue
+        if next_position not in body:
+            valid_directions.append(direction)
+
+    if valid_directions:
+        return random.choice(valid_directions)
+
+    return random.choice(directions)
+    
 
 # Start server when `python main.py` is run
 if __name__ == "__main__":
