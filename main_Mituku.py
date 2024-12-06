@@ -509,13 +509,15 @@ def move(game_state: typing.Dict) -> typing.Dict:
     #二つの関数が出した方向が一致すると
     #全ての判定にprintを付けて，どこの判定を使用したのか確認できるようにするとデバックしやすくなる．
     #100ターン先（餌をぎりぎりで取る時）までの行動を再帰的に関数を使っている人が要るっぽい
+
+    #袋小路がどっちに行ってもいい場合により良い方を選択できるように，餌によって行き止まりだと思っている方を解除したらどうなるのかも書いておくとよいのでは？
         
     #実行ゾーン
     avoid_neck(0,0,0)
     prevent_bound(0,0,0)
     prevent_itself(0,0,0)
 
-    if my_health > 10:
+    if (my_health > 10 and game_state['you']["length"] < 12) or my_health >15:
         if game_state["turn"] <700:
             prevent_food(0,0,0)
         avoid_dead_end(0,0,0,0,0,0,0)
