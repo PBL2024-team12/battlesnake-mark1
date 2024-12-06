@@ -264,7 +264,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
                 fd_count = fd_count + 1
 
-        if min_food_distance == distance_to_food[1] and fd_count == 0:
+        if min_food_distance == distance_to_food[1] and fd_count == 0 and len(game_state["board"]["food"]) >= 2:
 
             if my_head["x"] - food1["x"] < 0:
                     recom["right"] = True
@@ -309,7 +309,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
             fd_count = fd_count + 1
 
                 
-        if min_food_distance == distance_to_food[2] and fd_count == 0:
+        if min_food_distance == distance_to_food[2] and fd_count == 0 and len(game_state["board"]["food"]) >= 3:
 
             if my_head["x"] - food2["x"] < 0:
                     recom["right"] = True
