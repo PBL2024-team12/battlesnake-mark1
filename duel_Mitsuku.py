@@ -120,43 +120,91 @@ def move(game_state: typing.Dict) -> typing.Dict:
     # opponents = game_state['board']['snakes']
 
     opponents = game_state['board']['snakes']
+    opponent_head = opponents[1]['body'][0]
     opponent_body = opponents[1]['body']
 
     def avoid_opponent_body():
-        
-        
-            opponent_count = 0
-    
-            for body in opponent_body:
-        
-                if my_head["x"] - 1 == body["x"] and my_head["y"] == body["y"]:
+        opponent_count = 0
+        for body in opponent_body:
+            if my_head["x"] - 1 == body["x"] and my_head["y"] == body["y"]:
+                is_move_safe["left"] = False
 
-                        is_move_safe["left"] = False
+            if my_head["x"] + 1 == body["x"] and my_head["y"]== body["y"]:
+                is_move_safe["right"] = False
 
-                if my_head["x"] + 1 == body["x"] and my_head["y"]== body["y"]:
+            if my_head["y"] - 1 == body["y"] and my_head["x"] == body["x"]:
+                is_move_safe["down"] = False
 
-                        is_move_safe["right"] = False
-
-                if my_head["y"] - 1 == body["y"] and my_head["x"] == body["x"]:
-                        is_move_safe["down"] = False
-
-                if my_head["y"] + 1 == body["y"] and my_head["x"] == body["x"]:
-                        is_move_safe["up"] = False
-
-                                        
+            if my_head["y"] + 1 == body["y"] and my_head["x"] == body["x"]:
+                is_move_safe["up"] = False
+                   
     avoid_opponent_body()
+        
+    def avoid_around_oponent_head():
+        if my_head["x"] - 1 == opponent_head["x"] + 1  and my_head["y"] == opponent_head["y"]:
+            is_move_safe["left"] = False
+        elif my_head["x"] - 1 == opponent_head["x"] - 1  and my_head["y"] == opponent_head["y"]:
+            is_move_safe["left"] = False
+        elif my_head["x"] - 1 == opponent_head["x"] and my_head["y"] == opponent_head["y"] + 1:
+            is_move_safe["left"] = False
+        elif my_head["x"] - 1 == opponent_head["x"] and my_head["y"] == opponent_head["y"] - 1:
+            is_move_safe["left"] = False
+
+        if my_head["x"] + 1 == opponent_head["x"] + 1 and my_head["y"] == opponent_head["y"]:
+            is_move_safe["right"] = False
+        elif my_head["x"] + 1 == opponent_head["x"] - 1 and my_head["y"] == opponent_head["y"]:
+            is_move_safe["right"] = False
+        elif my_head["x"] + 1 == opponent_head["x"] and my_head["y"] == opponent_head["y"] + 1:
+            is_move_safe["right"] = False
+        elif my_head["x"] + 1 == opponent_head["x"] and my_head["y"] == opponent_head["y"] - 1:
+            is_move_safe["right"] = False
+            
+        if my_head["y"] - 1 == opponent_head["y"] + 1 and my_head["x"] == opponent_head["x"]:
+            is_move_safe["down"] = False
+        elif my_head["y"] - 1 == opponent_head["y"] - 1 and my_head["x"] == opponent_head["x"]:
+            is_move_safe["down"] = False
+        elif my_head["y"] - 1 == opponent_head["y"] and my_head["x"] == opponent_head["x"] + 1:
+            is_move_safe["down"] = False
+        elif my_head["y"] - 1 == opponent_head["y"] and my_head["x"] == opponent_head["x"] - 1:
+            is_move_safe["down"] = False
+
+        if my_head["y"] + 1 == opponent_head["y"] + 1 and my_head["x"] == opponent_head["x"]:
+            is_move_safe["up"] = False
+        elif my_head["y"] + 1 == opponent_head["y"] - 1 and my_head["x"] == opponent_head["x"]:
+            is_move_safe["up"] = False
+        elif my_head["y"] + 1 == opponent_head["y"] and my_head["x"] == opponent_head["x"] + 1:
+            is_move_safe["up"] = False
+        elif my_head["y"] + 1 == opponent_head["y"] and my_head["x"] == opponent_head["x"] - 1:
+            is_move_safe["up"] = False
 
 
-    if len(game_state["board"]["food"]) >= 1:
+    opponent_vector = {"up":False, "down":False, "left":False,"right":False}
+    
+    def kill_opponent():
+        if opponent_head['x'] == opponent_body[1]['x'] + 1:                 #左向き
+            opponent_vector["left"] = True
+        elif opponent_head['x'] == opponent_body[1]['x'] - 1:               #右向き
+            opponent_vector["right"] = True
+        elif opponent_head['y'] == opponent_body[1]['y'] + 1:               #下向き
+              opponent_vector["down"] = True
+        elif opponent_head['y'] == opponent_body[1]['y'] - 1:               #上向き
+              opponent_vector["up"] = True
+         
+
+
+
+
+    if len(game_state["board"]["food"]) == 1:
         food0 = game_state["board"]["food"][0]
-    if len(game_state["board"]["food"]) >= 2:
+    elif len(game_state["board"]["food"]) == 2:
+        food0 = game_state["board"]["food"][0]
         food1 = game_state["board"]["food"][1]
-    if len(game_state["board"]["food"]) >= 3:
+    elif len(game_state["board"]["food"]) == 3:
+        food0 = game_state["board"]["food"][0]
+        food1 = game_state["board"]["food"][1]
         food2 = game_state["board"]["food"][2]
 
     
-
-
     recom={"up":False, "down":False, "left":False,"right":False}
     
     def go_to_food():
@@ -336,7 +384,10 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
     go_to_food()
 
-
+    if game_state['you']["length"] < game_state['board']['snakes'][1]['length']:
+          avoid_around_oponent_head()
+    else:
+          kill_opponent()
 
     
 
