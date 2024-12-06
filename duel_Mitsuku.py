@@ -192,6 +192,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
     avoid_opponent_body(0,0,0)
 
+
     if len(game_state["board"]["food"]) >= 1:
         food0 = game_state["board"]["food"][0]
     if len(game_state["board"]["food"]) >= 2:
