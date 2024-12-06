@@ -192,6 +192,190 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
     avoid_opponent_body(0,0,0)
 
+    food0 = game_state["board"]["food"][0]
+    if len(game_state["board"]["food"]) > 2:
+        food1 = game_state["board"]["food"][1]
+        food2 = game_state["board"]["food"][2]
+
+
+    recom={"up":False, "down":False, "left":False,"right":False}
+    
+    def go_to_food():
+        #初期化
+        recom["down"] = False 
+        recom["up"] = False
+        recom["left"] = False
+        recom["right"] = False
+        next_to_food = 0 #餌が隣にあったら1
+        distance_to_food = [0,0,0]
+        i = 0
+
+        for food in all_food:
+            distance_to_food[i] = abs(my_head["x"] - food["x"]) + abs(my_head["y"] - food["y"])
+            i = i + 1
+
+        min_food_distance = min(distance_to_food[0], distance_to_food[1], distance_to_food[2])
+        fd_count = 0
+
+        if min_food_distance == distance_to_food[0]:
+
+            if my_head["x"] - food0["x"] < 0:
+                recom["right"] = True
+
+            elif my_head["x"] - food0["x"] > 0:
+                recom["left"] = True
+
+            if my_head["y"] - food0["y"] < 0:
+                recom["up"] = True
+
+            elif my_head["y"] - food0["y"] > 0:
+                recom["down"] = True
+
+            if my_head["x"] - food0["x"] == 0 and my_head["y"] - food0["y"] == 1:
+                recom["down"] = True
+                recom["up"] = False
+                recom["left"] = False
+                recom["right"] = False
+                next_to_food = 1
+
+            elif my_head["x"] - food0["x"] == 0 and my_head["y"] - food0["y"] == -1:
+                recom["down"] = False
+                recom["up"] = True
+                recom["left"] = False
+                recom["right"] = False
+                next_to_food = 1
+
+            if my_head["x"] - food0["x"] == 1 and my_head["y"] - food0["y"] == 0:
+                recom["down"] = False
+                recom["up"] = False
+                recom["left"] = True
+                recom["right"] = False
+                next_to_food = 1
+
+            elif my_head["x"] - food0["x"] == -1 and my_head["y"] - food0["y"] == 0:
+                recom["down"] = False
+                recom["up"] = False
+                recom["left"] = False
+                recom["right"] = True
+                next_to_food = 1
+
+                fd_count = fd_count + 1
+
+        if min_food_distance == distance_to_food[1] and fd_count == 0:
+
+            if my_head["x"] - food1["x"] < 0:
+                    recom["right"] = True
+
+            elif my_head["x"] - food1["x"] > 0:
+                    recom["left"] = True
+
+            if my_head["y"] - food1["y"] < 0:
+                    recom["up"] = True
+
+            elif my_head["y"] - food1["y"] > 0:
+                    recom["down"] = True
+
+            if my_head["x"] - food1["x"] == 0 and my_head["y"] - food1["y"] == 1:
+                    recom["down"] = True
+                    recom["up"] = False
+                    recom["left"] = False
+                    recom["right"] = False
+                    next_to_food = 1
+
+            elif my_head["x"] - food1["x"] == 0 and my_head["y"] - food1["y"] == -1:
+                    recom["down"] = False
+                    recom["up"] = True
+                    recom["left"] = False
+                    recom["right"] = False
+                    next_to_food = 1
+
+            if my_head["x"] - food1["x"] == 1 and my_head["y"] - food1["y"] == 0:
+                    recom["down"] = False
+                    recom["up"] = False
+                    recom["left"] = True
+                    recom["right"] = False
+                    next_to_food = 1
+
+            elif my_head["x"] - food1["x"] == -1 and my_head["y"] - food1["y"] == 0:
+                    recom["down"] = False
+                    recom["up"] = False
+                    recom["left"] = False
+                    recom["right"] = True
+                    next_to_food = 1
+
+            fd_count = fd_count + 1
+
+                
+        if min_food_distance == distance_to_food[2] and fd_count == 0:
+
+            if my_head["x"] - food2["x"] < 0:
+                    recom["right"] = True
+
+            elif my_head["x"] - food2["x"] > 0:
+                    recom["left"] = True
+
+            if my_head["y"] - food2["y"] < 0:
+                    recom["up"] = True
+
+            elif my_head["y"] - food2["y"] > 0:
+                    recom["down"] = True
+
+            if my_head["x"] - food2["x"] == 0 and my_head["y"] - food2["y"] == 1:
+                    recom["down"] = True
+                    recom["up"] = False
+                    recom["left"] = False
+                    recom["right"] = False
+                    next_to_food = 1
+
+            elif my_head["x"] - food2["x"] == 0 and my_head["y"] - food2["y"] == -1:
+                    recom["down"] = False
+                    recom["up"] = True
+                    recom["left"] = False
+                    recom["right"] = False
+                    next_to_food = 1
+
+            if my_head["x"] - food2["x"] == 1 and my_head["y"] - food2["y"] == 0:
+                    recom["down"] = False
+                    recom["up"] = False
+                    recom["left"] = True
+                    recom["right"] = False
+                    next_to_food = 1
+
+            elif my_head["x"] - food2["x"] == -1 and my_head["y"] - food2["y"] == 0:
+                    recom["down"] = False
+                    recom["up"] = False
+                    recom["left"] = False
+                    recom["right"] = True
+                    next_to_food = 1
+
+            fd_count = fd_count + 1
+
+        if recom["down"] == True and is_move_safe["down"] == True:
+            is_move_safe["right"] = False
+            is_move_safe["up"] = False
+            is_move_safe["left"] = False
+        
+        if recom["up"] == True and is_move_safe["up"] == True:
+            is_move_safe["right"] = False
+            is_move_safe["down"] = False
+            is_move_safe["left"] = False
+
+        if recom["left"] == True and is_move_safe["left"] == True:
+            is_move_safe["right"] = False
+            is_move_safe["up"] = False
+            is_move_safe["down"] = False
+
+        if recom["right"] == True and is_move_safe["right"] == True:
+            is_move_safe["down"] = False
+            is_move_safe["up"] = False
+            is_move_safe["left"] = False
+
+        if next_to_food == 1:
+            return 1
+
+    go_to_food()
+
+
 
     
 
