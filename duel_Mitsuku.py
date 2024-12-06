@@ -154,6 +154,8 @@ def move(game_state: typing.Dict) -> typing.Dict:
     if len(game_state["board"]["food"]) >= 3:
         food2 = game_state["board"]["food"][2]
 
+    
+
 
     recom={"up":False, "down":False, "left":False,"right":False}
     
@@ -170,6 +172,8 @@ def move(game_state: typing.Dict) -> typing.Dict:
         for food in all_food:
             distance_to_food[i] = abs(my_head["x"] - food["x"]) + abs(my_head["y"] - food["y"])
             i = i + 1
+            if i == len(game_state["board"]["food"]):
+                  break
 
         min_food_distance = min(distance_to_food[0], distance_to_food[1], distance_to_food[2])
         fd_count = 0
