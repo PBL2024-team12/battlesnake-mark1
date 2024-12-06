@@ -94,24 +94,23 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
     # TODO: Step 2 - Prevent your Battlesnake from colliding with itself
     # my_body = game_state['you']['body']
-    def avoid_itself(x1,y1,z1):
+    def avoid_itself():
 
         #蛇のしっぽの先だけポップさせている（バグるので今は停止）
-        if z1 == 0:
-            cutted_my_tail = my_body.pop()  
+        cutted_my_tail = my_body.pop()  
     
         for body in my_body:
     
-            if my_head["x"] + x1 - 1 == body["x"] and my_head["y"] + y1 == body["y"]:
+            if my_head["x"] - 1 == body["x"] and my_head["y"] == body["y"]:
                     is_move_safe["left"] = False
 
-            if my_head["x"] + x1 + 1 == body["x"] and my_head["y"] + y1 == body["y"]:
+            if my_head["x"] + 1 == body["x"] and my_head["y"] == body["y"]:
                     is_move_safe["right"] = False
 
-            if my_head["y"] + y1 - 1 == body["y"] and my_head["x"] + x1 == body["x"]:
+            if my_head["y"] - 1 == body["y"] and my_head["x"] == body["x"]:
                     is_move_safe["down"] = False
 
-            if my_head["y"] + y1 + 1 == body["y"] and my_head["x"] + x1 == body["x"]:
+            if my_head["y"] + 1 == body["y"] and my_head["x"] == body["x"]:
                     is_move_safe["up"] = False
                                            #ここで蛇のしっぽを復活？(関数化しているので今は不要)
     
