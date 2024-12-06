@@ -75,36 +75,22 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
     my_health = game_state['you']['health']
 
-    def avoid_bound(x1,y1,z1):
-            bound_count = 0
+    def avoid_bound():
         
-            if my_head["x"] + x1 == 0:
-                if z1 == 0:
+            if my_head["x"] == 0:
                     is_move_safe["left"] = False
-                else:
-                    bound_count = bound_count + 1
 
-            if my_head["x"] + x1 == board_width - 1:
-                if z1 == 0:
+            if my_head["x"] == board_width - 1:
                     is_move_safe["right"] = False
-                else:
-                    bound_count = bound_count + 1
 
-            if my_head["y"] + y1 ==  0:
-                if z1 == 0:
+            if my_head["y"] ==  0:
                     is_move_safe["down"] = False
-                else:
-                    bound_count = bound_count + 1
 
-            if my_head["y"] + y1 == board_height - 1:
-                if z1 == 0:
+            if my_head["y"] == board_height - 1:
                     is_move_safe["up"] = False
-                else:
-                    bound_count = bound_count + 1
 
-            return bound_count
     
-    avoid_bound(0,0,0)
+    avoid_bound()
 
     # TODO: Step 2 - Prevent your Battlesnake from colliding with itself
     # my_body = game_state['you']['body']
@@ -113,40 +99,23 @@ def move(game_state: typing.Dict) -> typing.Dict:
         #蛇のしっぽの先だけポップさせている（バグるので今は停止）
         if z1 == 0:
             cutted_my_tail = my_body.pop()  
-                                     
-        itself_count = 0
     
         for body in my_body:
     
             if my_head["x"] + x1 - 1 == body["x"] and my_head["y"] + y1 == body["y"]:
-                if z1 == 0:
                     is_move_safe["left"] = False
-                else:
-                    itself_count = itself_count + 1
 
             if my_head["x"] + x1 + 1 == body["x"] and my_head["y"] + y1 == body["y"]:
-                if z1 == 0:
                     is_move_safe["right"] = False
-                else:
-                    itself_count = itself_count + 1
 
             if my_head["y"] + y1 - 1 == body["y"] and my_head["x"] + x1 == body["x"]:
-                if z1 == 0:
                     is_move_safe["down"] = False
-                else:
-                    itself_count = itself_count + 1
 
             if my_head["y"] + y1 + 1 == body["y"] and my_head["x"] + x1 == body["x"]:
-                if z1 == 0:
                     is_move_safe["up"] = False
-                else:
-                    itself_count = itself_count + 1
-
                                            #ここで蛇のしっぽを復活？(関数化しているので今は不要)
-
-        return itself_count
     
-    avoid_itself(0,0,0)
+    avoid_itself()
 
     # TODO: Step 3 - Prevent your Battlesnake from colliding with other Battlesnakes
     # opponents = game_state['board']['snakes']
@@ -154,43 +123,29 @@ def move(game_state: typing.Dict) -> typing.Dict:
     opponents = game_state['board']['snakes']
     opponent_body = opponents[1]['body']
 
-    def avoid_opponent_body(x1, y1, z1):
+    def avoid_opponent_body():
         
-        if z1 == 0:
         
             opponent_count = 0
     
             for body in opponent_body:
         
-                if my_head["x"] + x1 - 1 == body["x"] and my_head["y"] + y1 == body["y"]:
-                    if z1 == 0:
+                if my_head["x"] - 1 == body["x"] and my_head["y"] == body["y"]:
+
                         is_move_safe["left"] = False
-                    else:
-                        opponent_count = opponent_count + 1
 
-                if my_head["x"] + x1 + 1 == body["x"] and my_head["y"] + y1 == body["y"]:
-                    if z1 == 0:
+                if my_head["x"] + 1 == body["x"] and my_head["y"]== body["y"]:
+
                         is_move_safe["right"] = False
-                    else:
-                        opponent_count = opponent_count + 1
 
-                if my_head["y"] + y1 - 1 == body["y"] and my_head["x"] + x1 == body["x"]:
-                    if z1 == 0:
+                if my_head["y"] - 1 == body["y"] and my_head["x"] == body["x"]:
                         is_move_safe["down"] = False
-                    else:
-                        opponent_count = opponent_count + 1
 
-                if my_head["y"] + y1 + 1 == body["y"] and my_head["x"] + x1 == body["x"]:
-                    if z1 == 0:
+                if my_head["y"] + 1 == body["y"] and my_head["x"] == body["x"]:
                         is_move_safe["up"] = False
-                    else:
-                        opponent_count = opponent_count + 1
 
-                                           
-
-        return opponent_count
-
-    avoid_opponent_body(0,0,0)
+                                        
+    avoid_opponent_body()
 
 
     if len(game_state["board"]["food"]) >= 1:
