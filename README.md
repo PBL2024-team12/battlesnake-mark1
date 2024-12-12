@@ -1,6 +1,14 @@
 # リンク集
  - BattleSnakeのリクエストとレスポンスの形式：[https://docs.battlesnake.com/api/example-move](https://docs.battlesnake.com/api/example-move)
 
+# コマンド
+```cmd
+battlesnake play --name mysnake --url http://localhost:8000 --name solo --url http://localhost:8001
+```
+```cmd
+battlesnake play --name mysnake --url http://localhost:8000 --name solo --url http://localhost:8001 --browser
+```
+
 
 # Battlesnake Python Starter Project
 
