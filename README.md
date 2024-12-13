@@ -3,10 +3,13 @@
 
 # コマンド
 ```cmd
-battlesnake play --name mysnake --url http://localhost:8000 --name solo --url http://localhost:8001
+.\battlesnake play --name mysnake --url http://localhost:8000 --name solo --url http://localhost:8001
 ```
 ```cmd
-battlesnake play --name mysnake --url http://localhost:8000 --name solo --url http://localhost:8001 --browser
+.\battlesnake play --name mysnake --url http://localhost:8000 --name solo --url http://localhost:8001 --browser
+```
+```cmd
+.\battlesnake play --name mysnake --url http://localhost:8000 --name lv3 --url http://pbl.ics.es.osaka-u.ac.jp:10003 --browser
 ```
 
 
