@@ -104,6 +104,23 @@ def move(game_state: typing.Dict) -> typing.Dict:
     # TODO: Step 3 - Prevent your Battlesnake from colliding with other Battlesnakes
     # opponents = game_state['board']['snakes']
 
+    opponents = game_state['board']['snakes']
+
+    if opponents:
+        opponent = [snake["body"] for snake in opponents]
+        result = left_of_head in opponent
+        if result == True:
+            is_move_safe["left"] = False
+        result = right_of_head in opponent
+        if result == True:
+            is_move_safe["right"] = False
+        result = down_of_head in opponent
+        if result == True:
+            is_move_safe["down"] = False
+        result = up_of_head in opponent
+        if result == True:
+            is_move_safe["up"] = False
+    
     # Are there any safe moves left?
     safe_moves = []
     for move, isSafe in is_move_safe.items():
@@ -154,7 +171,6 @@ def move(game_state: typing.Dict) -> typing.Dict:
                 next_move = random.choice(safe_moves)  # 安全な動きがない場合、ランダム
         else:
             # 他のヘビの頭に向かう
-            opponents = game_state['board']['snakes']
             if opponents:
                 # 最も近い敵のヘビの頭を探す
                 opponent_heads = [snake["body"][0] for snake in opponents]
