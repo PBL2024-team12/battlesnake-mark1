@@ -9,7 +9,7 @@ def info() -> typing.Dict:
   return {
       "apiversion": "1",
       "author": "Taketo Usui",
-      "color": "#0FCC4E",
+      "color": "#000000",
       "head": "tiger-king",
       "tail": "tiger-tail",
   }
@@ -41,7 +41,16 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
   # == 次に死なない == #
   # 次、死ぬ動きは0点
-  safe_moves = find_safe_moves(head, my_body, enemy_body[:-1])
+  dangerous_enemy_body = enemy_body.copy()
+  if len(enemy_body) > 0:
+    dangerous_enemy_body.pop()
+  if len(enemy_body) >= len(my_body):
+    enemy_head = enemy_body[0]
+    dangerous_enemy_body.append(up(enemy_head))
+    dangerous_enemy_body.append(down(enemy_head))
+    dangerous_enemy_body.append(left(enemy_head))
+    dangerous_enemy_body.append(right(enemy_head))
+  safe_moves = find_safe_moves(head, my_body, dangerous_enemy_body)
   for move in ["left", "right", "up", "down"]:
     if not move in safe_moves:
       moves_score[move] = 0
