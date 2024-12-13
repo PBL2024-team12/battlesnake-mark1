@@ -223,10 +223,10 @@ def move(game_state: typing.Dict) -> typing.Dict:
     go_to_food()
 
 
-    '''if game_state['you']["length"] < game_state['board']['snakes'][1]['length']:
+    if game_state['you']["length"] < game_state['board']['snakes'][1]['length']:
           avoid_around_oponent_head()
-    else:
-          kill_opponent() '''
+    '''else:
+          kill_opponent()'''
 
     
 
