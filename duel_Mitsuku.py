@@ -193,24 +193,24 @@ def move(game_state: typing.Dict) -> typing.Dict:
     
     def go_to_food():
 
-        distance_comparer =[{"down" : calculate_min_distance_to_food(0,-1)},{"up" : calculate_min_distance_to_food(0,1)},{"left" : calculate_min_distance_to_food(-1,0)},{"right" : calculate_min_distance_to_food(1,0)}]
+        distance_comparer =[calculate_min_distance_to_food(0,-1),calculate_min_distance_to_food(0,1),calculate_min_distance_to_food(-1,0),calculate_min_distance_to_food(1,0)]
 
-        if min(distance_comparer) == distance_comparer["down"] and is_move_safe["down"] == True:
+        if min(distance_comparer) == distance_comparer[0] and is_move_safe["down"] == True:
             is_move_safe["left"] == False
             is_move_safe["right"] == False
             is_move_safe["up"] == False
         
-        elif min(distance_comparer) == distance_comparer["up"] and is_move_safe["up"] == True:
+        elif min(distance_comparer) == distance_comparer[1] and is_move_safe["up"] == True:
             is_move_safe["down"] == False
             is_move_safe["left"] == False
             is_move_safe["right"] == False
 
-        elif min(distance_comparer) == distance_comparer["left"] and is_move_safe["left"] == True:
+        elif min(distance_comparer) == distance_comparer[2] and is_move_safe["left"] == True:
             is_move_safe["down"] == False
             is_move_safe["right"] == False
             is_move_safe["up"] == False
 
-        elif min(distance_comparer) == distance_comparer["right"] and is_move_safe["right"] == True:
+        elif min(distance_comparer) == distance_comparer[3] and is_move_safe["right"] == True:
             is_move_safe["down"] == False
             is_move_safe["left"] == False
             is_move_safe["up"] == False
