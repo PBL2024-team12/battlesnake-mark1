@@ -220,14 +220,13 @@ def move(game_state: typing.Dict) -> typing.Dict:
     avoid_itself()
     avoid_opponent_body()
     avoid_bound()
-    go_to_food()
 
 
     if game_state['you']["length"] < game_state['board']['snakes'][1]['length']:
           avoid_around_oponent_head()
     '''else:
           kill_opponent()'''
-
+    go_to_food()
     
 
     # Are there any safe moves left?
