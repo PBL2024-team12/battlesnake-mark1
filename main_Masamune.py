@@ -22,7 +22,7 @@ def info() -> typing.Dict:
 
     return {
         "apiversion": "1",
-        "author": "",  # TODO: Your Battlesnake Username
+        "author": "Masamune",  # TODO: Your Battlesnake Username
         "color": "#1f1e33",  # TODO: Choose color
         "head": "all-seeing",  # TODO: Choose head
         "tail": "weight",  # TODO: Choose tail
@@ -104,6 +104,23 @@ def move(game_state: typing.Dict) -> typing.Dict:
     # TODO: Step 3 - Prevent your Battlesnake from colliding with other Battlesnakes
     # opponents = game_state['board']['snakes']
 
+    snakes = game_state['board']['snakes']
+
+    for snake in snakes:
+        if snake["name"] != "Masamune":
+            result = left_of_head in snake["body"]
+            if result == True:
+                is_move_safe["left"] = False
+            result = right_of_head in snake["body"]
+            if result == True:
+                is_move_safe["right"] = False
+            result = down_of_head in snake["body"]
+            if result == True:
+                is_move_safe["down"] = False
+            result = up_of_head in snake["body"]
+            if result == True:
+                is_move_safe["up"] = False
+    
     # Are there any safe moves left?
     safe_moves = []
     for move, isSafe in is_move_safe.items():
@@ -117,22 +134,6 @@ def move(game_state: typing.Dict) -> typing.Dict:
     all_food = game_state['board']['food']
     my_health = game_state['you']['health']
 
-    # 
-    health = game_state['you']['health']
-    if health > 10:
-        result = left_of_head in all_food
-        if result == True:
-            is_move_safe["left"] = False
-        result = right_of_head in all_food
-        if result == True:
-            is_move_safe["right"] = False
-        result = down_of_head in all_food
-        if result == True:
-            is_move_safe["down"] = False
-        result = up_of_head in all_food
-        if result == True:
-            is_move_safe["up"] = False
-
     # Choose a random move from the safe ones
     # 体力が10以下なら食べ物に向かう
 
@@ -140,7 +141,28 @@ def move(game_state: typing.Dict) -> typing.Dict:
     if food:
         # 最も近い食べ物を探す
         closest_food = min(food, key=lambda f: abs(f["x"] - my_head["x"]) + abs(f["y"] - my_head["y"]))
-        if health <= 10:
+        for snake in snakes:
+            if snake["name"] != "Masamune":
+                if len(my_body) > len(snake["body"]) + 1:
+            # 他のヘビの頭に向かう
+                # 最も近い敵のヘビの頭を探す
+                    opponent_heads = [snake["body"][0] for snake in snakes]
+                    closest_head = min(opponent_heads, key=lambda head: abs(head["x"] - my_head["x"]) + abs(head["y"] - my_head["y"]))
+
+                    # 相手の頭に向かう方向を決定
+                    if closest_head["x"] < my_head["x"] and is_move_safe["left"]:
+                        next_move = "left"
+                    elif closest_head["x"] > my_head["x"] and is_move_safe["right"]:
+                        next_move = "right"
+                    elif closest_head["y"] < my_head["y"] and is_move_safe["down"]:
+                        next_move = "down"
+                    elif closest_head["y"] > my_head["y"] and is_move_safe["up"]:
+                        next_move = "up"
+                    else:
+                        # 近づける方向がない場合、ランダムな安全な動きを選択
+                        safe_moves = [move for move, is_safe in is_move_safe.items() if is_safe]
+                        next_move = random.choice(safe_moves) if safe_moves else "down"
+        else:
             # 食べ物への移動方向を決定
             if closest_food["x"] < my_head["x"] and is_move_safe["left"]:
                 next_move = "left"
@@ -152,28 +174,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
                 next_move = "up"
             else:
                 next_move = random.choice(safe_moves)  # 安全な動きがない場合、ランダム
-        else:
-            # 他のヘビの頭に向かう
-            opponents = game_state['board']['snakes']
-            if opponents:
-                # 最も近い敵のヘビの頭を探す
-                opponent_heads = [snake["body"][0] for snake in opponents]
-                closest_head = min(opponent_heads, key=lambda head: abs(head["x"] - my_head["x"]) + abs(head["y"] - my_head["y"]))
-
-                # 相手の頭に向かう方向を決定
-                if closest_head["x"] < my_head["x"] and is_move_safe["left"]:
-                    next_move = "left"
-                elif closest_head["x"] > my_head["x"] and is_move_safe["right"]:
-                    next_move = "right"
-                elif closest_head["y"] < my_head["y"] and is_move_safe["down"]:
-                    next_move = "down"
-                elif closest_head["y"] > my_head["y"] and is_move_safe["up"]:
-                    next_move = "up"
-                else:
-                    # 近づける方向がない場合、ランダムな安全な動きを選択
-                    safe_moves = [move for move, is_safe in is_move_safe.items() if is_safe]
-                    next_move = random.choice(safe_moves) if safe_moves else "down"
-
+            
     # TODO: Step 4 - Move towards food instead of random, to regain health and survive longer
     # food = game_state['board']['food']
 
