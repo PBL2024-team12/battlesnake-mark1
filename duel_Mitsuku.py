@@ -89,9 +89,6 @@ def move(game_state: typing.Dict) -> typing.Dict:
             if my_head["y"] == board_height - 1:
                     is_move_safe["up"] = False
 
-    
-    avoid_bound()
-
     # TODO: Step 2 - Prevent your Battlesnake from colliding with itself
     # my_body = game_state['you']['body']
     def avoid_itself():
@@ -113,8 +110,6 @@ def move(game_state: typing.Dict) -> typing.Dict:
             if my_head["y"] + 1 == body["y"] and my_head["x"] == body["x"]:
                     is_move_safe["up"] = False
                                            #ここで蛇のしっぽを復活？(関数化しているので今は不要)
-    
-    avoid_itself()
 
     # TODO: Step 3 - Prevent your Battlesnake from colliding with other Battlesnakes
     # opponents = game_state['board']['snakes']
@@ -137,8 +132,6 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
             if my_head["y"] + 1 == body["y"] and my_head["x"] == body["x"]:
                 is_move_safe["up"] = False
-                   
-    avoid_opponent_body()
         
     def avoid_around_oponent_head():
         if my_head["x"] - 1 == opponent_head["x"] + 1  and my_head["y"] == opponent_head["y"]:
@@ -179,7 +172,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
 
     opponent_vector = {"up":False, "down":False, "left":False,"right":False}
-    
+
     def kill_opponent():
         if opponent_head['x'] == opponent_body[1]['x'] + 1:                 #左向き
             opponent_vector["left"] = True
@@ -189,205 +182,53 @@ def move(game_state: typing.Dict) -> typing.Dict:
               opponent_vector["down"] = True
         elif opponent_head['y'] == opponent_body[1]['y'] - 1:               #上向き
               opponent_vector["up"] = True
-         
-
-
-
-
-    if len(game_state["board"]["food"]) == 1:
-        food0 = game_state["board"]["food"][0]
-    elif len(game_state["board"]["food"]) == 2:
-        food0 = game_state["board"]["food"][0]
-        food1 = game_state["board"]["food"][1]
-    elif len(game_state["board"]["food"]) == 3:
-        food0 = game_state["board"]["food"][0]
-        food1 = game_state["board"]["food"][1]
-        food2 = game_state["board"]["food"][2]
 
     
-    recom={"up":False, "down":False, "left":False,"right":False}
+    def calculate_min_distance_to_food(x,y):
+        distance_to_food = []
+        i = 0
+        for food in all_food:
+            distance_to_food[i] = abs(my_head["x"] + x - food["x"]) + abs(my_head["y"] + y - food["y"])
+            i = i + 1
+
+        return min(distance_to_food)
     
     def go_to_food():
-        #初期化
-        recom["down"] = False 
-        recom["up"] = False
-        recom["left"] = False
-        recom["right"] = False
-        next_to_food = 0 #餌が隣にあったら1
-        distance_to_food = [0,0,0]
-        i = 0
 
-        for food in all_food:
-            distance_to_food[i] = abs(my_head["x"] - food["x"]) + abs(my_head["y"] - food["y"])
-            i = i + 1
-            if i == len(game_state["board"]["food"]):
-                  break
+        distance_comparer =[{"down" : calculate_min_distance_to_food(0,-1)},{"up" : calculate_min_distance_to_food(0,1)},{"left" : calculate_min_distance_to_food(-1,0)},{"right" : calculate_min_distance_to_food(1,0)}]
 
-        min_food_distance = min(distance_to_food[0], distance_to_food[1], distance_to_food[2])
-        fd_count = 0
-
-        if min_food_distance == distance_to_food[0]:
-
-            if my_head["x"] - food0["x"] < 0:
-                recom["right"] = True
-
-            elif my_head["x"] - food0["x"] > 0:
-                recom["left"] = True
-
-            if my_head["y"] - food0["y"] < 0:
-                recom["up"] = True
-
-            elif my_head["y"] - food0["y"] > 0:
-                recom["down"] = True
-
-            if my_head["x"] - food0["x"] == 0 and my_head["y"] - food0["y"] == 1:
-                recom["down"] = True
-                recom["up"] = False
-                recom["left"] = False
-                recom["right"] = False
-                next_to_food = 1
-
-            elif my_head["x"] - food0["x"] == 0 and my_head["y"] - food0["y"] == -1:
-                recom["down"] = False
-                recom["up"] = True
-                recom["left"] = False
-                recom["right"] = False
-                next_to_food = 1
-
-            if my_head["x"] - food0["x"] == 1 and my_head["y"] - food0["y"] == 0:
-                recom["down"] = False
-                recom["up"] = False
-                recom["left"] = True
-                recom["right"] = False
-                next_to_food = 1
-
-            elif my_head["x"] - food0["x"] == -1 and my_head["y"] - food0["y"] == 0:
-                recom["down"] = False
-                recom["up"] = False
-                recom["left"] = False
-                recom["right"] = True
-                next_to_food = 1
-
-                fd_count = fd_count + 1
-
-        if min_food_distance == distance_to_food[1] and fd_count == 0 and len(game_state["board"]["food"]) >= 2:
-
-            if my_head["x"] - food1["x"] < 0:
-                    recom["right"] = True
-
-            elif my_head["x"] - food1["x"] > 0:
-                    recom["left"] = True
-
-            if my_head["y"] - food1["y"] < 0:
-                    recom["up"] = True
-
-            elif my_head["y"] - food1["y"] > 0:
-                    recom["down"] = True
-
-            if my_head["x"] - food1["x"] == 0 and my_head["y"] - food1["y"] == 1:
-                    recom["down"] = True
-                    recom["up"] = False
-                    recom["left"] = False
-                    recom["right"] = False
-                    next_to_food = 1
-
-            elif my_head["x"] - food1["x"] == 0 and my_head["y"] - food1["y"] == -1:
-                    recom["down"] = False
-                    recom["up"] = True
-                    recom["left"] = False
-                    recom["right"] = False
-                    next_to_food = 1
-
-            if my_head["x"] - food1["x"] == 1 and my_head["y"] - food1["y"] == 0:
-                    recom["down"] = False
-                    recom["up"] = False
-                    recom["left"] = True
-                    recom["right"] = False
-                    next_to_food = 1
-
-            elif my_head["x"] - food1["x"] == -1 and my_head["y"] - food1["y"] == 0:
-                    recom["down"] = False
-                    recom["up"] = False
-                    recom["left"] = False
-                    recom["right"] = True
-                    next_to_food = 1
-
-            fd_count = fd_count + 1
-
-                
-        if min_food_distance == distance_to_food[2] and fd_count == 0 and len(game_state["board"]["food"]) >= 3:
-
-            if my_head["x"] - food2["x"] < 0:
-                    recom["right"] = True
-
-            elif my_head["x"] - food2["x"] > 0:
-                    recom["left"] = True
-
-            if my_head["y"] - food2["y"] < 0:
-                    recom["up"] = True
-
-            elif my_head["y"] - food2["y"] > 0:
-                    recom["down"] = True
-
-            if my_head["x"] - food2["x"] == 0 and my_head["y"] - food2["y"] == 1:
-                    recom["down"] = True
-                    recom["up"] = False
-                    recom["left"] = False
-                    recom["right"] = False
-                    next_to_food = 1
-
-            elif my_head["x"] - food2["x"] == 0 and my_head["y"] - food2["y"] == -1:
-                    recom["down"] = False
-                    recom["up"] = True
-                    recom["left"] = False
-                    recom["right"] = False
-                    next_to_food = 1
-
-            if my_head["x"] - food2["x"] == 1 and my_head["y"] - food2["y"] == 0:
-                    recom["down"] = False
-                    recom["up"] = False
-                    recom["left"] = True
-                    recom["right"] = False
-                    next_to_food = 1
-
-            elif my_head["x"] - food2["x"] == -1 and my_head["y"] - food2["y"] == 0:
-                    recom["down"] = False
-                    recom["up"] = False
-                    recom["left"] = False
-                    recom["right"] = True
-                    next_to_food = 1
-
-            fd_count = fd_count + 1
-
-        if recom["down"] == True and is_move_safe["down"] == True:
-            is_move_safe["right"] = False
-            is_move_safe["up"] = False
-            is_move_safe["left"] = False
+        if min(distance_comparer) == distance_comparer["down"] and is_move_safe["down"] == True:
+            is_move_safe["left"] == False
+            is_move_safe["right"] == False
+            is_move_safe["up"] == False
         
-        if recom["up"] == True and is_move_safe["up"] == True:
-            is_move_safe["right"] = False
-            is_move_safe["down"] = False
-            is_move_safe["left"] = False
+        elif min(distance_comparer) == distance_comparer["up"] and is_move_safe["up"] == True:
+            is_move_safe["down"] == False
+            is_move_safe["left"] == False
+            is_move_safe["right"] == False
 
-        if recom["left"] == True and is_move_safe["left"] == True:
-            is_move_safe["right"] = False
-            is_move_safe["up"] = False
-            is_move_safe["down"] = False
+        elif min(distance_comparer) == distance_comparer["left"] and is_move_safe["left"] == True:
+            is_move_safe["down"] == False
+            is_move_safe["right"] == False
+            is_move_safe["up"] == False
 
-        if recom["right"] == True and is_move_safe["right"] == True:
-            is_move_safe["down"] = False
-            is_move_safe["up"] = False
-            is_move_safe["left"] = False
+        elif min(distance_comparer) == distance_comparer["right"] and is_move_safe["right"] == True:
+            is_move_safe["down"] == False
+            is_move_safe["left"] == False
+            is_move_safe["up"] == False
 
-        if next_to_food == 1:
-            return 1
 
+    
+    avoid_itself()
+    avoid_opponent_body()
+    avoid_bound()
     go_to_food()
 
-    if game_state['you']["length"] < game_state['board']['snakes'][1]['length']:
+
+    '''if game_state['you']["length"] < game_state['board']['snakes'][1]['length']:
           avoid_around_oponent_head()
     else:
-          kill_opponent()
+          kill_opponent() '''
 
     
 
