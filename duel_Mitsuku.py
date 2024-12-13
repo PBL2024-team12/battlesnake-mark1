@@ -186,10 +186,8 @@ def move(game_state: typing.Dict) -> typing.Dict:
     
     def calculate_min_distance_to_food(x,y):
         distance_to_food = []
-        i = 0
         for food in all_food:
-            distance_to_food[i] = abs(my_head["x"] + x - food["x"]) + abs(my_head["y"] + y - food["y"])
-            i = i + 1
+            distance_to_food.append(abs(my_head["x"] + x - food["x"]) + abs(my_head["y"] + y - food["y"]))
 
         return min(distance_to_food)
     
