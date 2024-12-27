@@ -114,7 +114,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
           new_enemy_heads.append(left(enemy_body[0]))
         elif enemy_move == "right":
           new_enemy_heads.append(right(enemy_body[0]))
-      span = life_span(new_head, new_my_body, {"heads": new_enemy_heads, "bodies": enemy_body[:-1], "original_bodies": enemy_body[:-1]}, max([len(my_body), len(enemy_body)]))
+      span = life_span(new_head, new_my_body, {"heads": new_enemy_heads, "bodies": enemy_body[:-1], "original_bodies": enemy_body[:-1]}, max([len(my_body), len(enemy_body), 10]))
     moves_score[move] = span*1000
 
   print(f"moves_score: {moves_score}")
