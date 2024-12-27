@@ -102,7 +102,15 @@ def move(game_state: typing.Dict) -> typing.Dict:
     if enemy_body == []:
       span = life_span(new_head, my_body, {"heads": [], "bodies": [], "original_bodies": []}, len(my_body))
     else:
-      new_my_body = [new_head] + my_body[:-1]
+      isOnFood = False
+      for food in game_state["board"]["food"]:
+        if new_head == food:
+          isOnFood = True
+          break
+      if(not isOnFood):
+        new_my_body = [new_head] + my_body[:-1]
+      else:
+        new_my_body = [new_head] + my_body
       new_enemy_moves = find_safe_moves(enemy_body[0], enemy_body, new_my_body)
       new_enemy_heads = []
       for enemy_move in new_enemy_moves:
@@ -149,6 +157,16 @@ def move(game_state: typing.Dict) -> typing.Dict:
       elif potential_after_next == "right":
         enemy_possible_coordinates_after_next.append(right(enemy_possible_coordinate_next))
         enemy_possible_coordinates_next.append(right(enemy_possible_coordinate_next))
+  coordinates_tmp = enemy_possible_coordinates_next.copy()
+  enemy_possible_coordinate_next = []
+  for i, co in enumerate(coordinates_tmp):
+    if not co in coordinates_tmp[i+1:]:
+      enemy_possible_coordinates_next.append(co)
+  coordinates_tmp = enemy_possible_coordinates_after_next.copy()
+  enemy_possible_coordinates_after_next = []
+  for i, co in enumerate(coordinates_tmp):
+    if not co in coordinates_tmp[i+1:]:
+      enemy_possible_coordinates_after_next.append(co)
   
   # == より好ましい動きを計算 == #
   for move in safe_moves:
