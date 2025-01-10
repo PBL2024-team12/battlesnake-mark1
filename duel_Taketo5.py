@@ -51,6 +51,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
   for move in extra_safe_moves:
     moves_score[move] = 1000000
 
+  # 真ん中による
   if head["x"]*2 < (board_width - 1):
     moves_score["right"] += 100*(board_width - 1 - head["x"]*2)**2
   elif head["x"]*2 > (board_width - 1):
@@ -60,7 +61,42 @@ def move(game_state: typing.Dict) -> typing.Dict:
   elif head["y"]*2 > (board_height - 1):
     moves_score["down"] += 100*(head["y"]*2 - board_height + 1)**2
 
+  # 食べ物による
+
+  # 盤上の各マスについて、自分が相手より先に到達できるマスを数え、より到達可能マスが多い方向のスコアを上げる。
+  # ただし、到達可能マスが少ないほどスコアの上昇率が大きくなるようにする。
+  # あるいは、到達可能マスが小さい場合は、到達可能マスによるスコア変動を大きく、到達可能マスが大きい場合は、食べ物や真ん中偏重によるスコア変動を大きくする。
+
   return calc_best_move(moves_score, turn)
+
+def count_reachable_cells(safe_moves, m_body, e_body, foods):
+  cells = [[0 for _ in range(board_height)] for _ in range(board_width)]
+  my_reachable_cells = 0
+  enemy_reachable_cells = 0
+  my_body = m_body.copy()
+  enemy_body = e_body.copy()
+  enemy_safe_moves = find_safe_moves(enemy_body[0], enemy_body, my_body, [])
+
+  # cellsの初期化。無：0、食べ物：-1、体：1、自分到達：1000+長さ、敵到達：2000+長さ。
+  my_length = len(my_body)
+  for body in my_body:
+    cells[body["x"]][body["y"]] = 1
+  for body in enemy_body:
+    cells[body["x"]][body["y"]] = 1
+  for food in foods:
+    cells[food["x"]][food["y"]] = -1
+  for move in safe_moves:
+    cells_temp = cells.copy()
+    listner_cells = [move_to_coordinate(my_body[0], move)]
+    for en_move in enemy_safe_moves:
+      listner_cells.append(move_to_coordinate(enemy_body[0], en_move))
+    while len(listner_cells) > 0:
+      new_listner_cells = []
+      for listner_cell in listner_cells:
+        x = listner_cell["x"]
+        y = listner_cell["y"]
+        
+      listner_cells = new_listner_cells
 
 def find_safe_moves(head: typing.Dict, my_body, enemy_body, obstacles) -> typing.List:
   moves = ["up", "down", "left", "right"]
