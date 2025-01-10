@@ -28,6 +28,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
   board_width = game_state["board"]["width"]
   board_height = game_state["board"]["height"]
   turn = game_state["turn"]
+  move_options = ["up", "down", "left", "right"]
 
   my_body = game_state["you"]["body"]
   head = my_body[0]
@@ -35,12 +36,33 @@ def move(game_state: typing.Dict) -> typing.Dict:
   for snakes in game_state["board"]["snakes"]:
     if snakes["id"] != game_state["you"]["id"]:
       enemy_body = snakes["body"]
-  
-  moves_score = {"left": 1000000, "right": 1000000, "up": 1000000, "down": 1000000}
+  moves_score = {"left": 0, "right": 0, "up": 0, "down": 0}
+
+  safe_moves = find_safe_moves(head, my_body, enemy_body, [])
+  if len(safe_moves) == 0:
+    return calc_best_move(moves_score, turn)
+  for move in safe_moves:
+    moves_score[move] = 500000
+  around_enemy_head = []
+  if len(enemy_body) > len(my_body):
+    for move in move_options:
+      around_enemy_head.append(move_to_coordinate(enemy_body[0], move))
+  extra_safe_moves = find_safe_moves(head, my_body, enemy_body, around_enemy_head)
+  for move in extra_safe_moves:
+    moves_score[move] = 1000000
+
+  if head["x"]*2 < (board_width - 1):
+    moves_score["right"] += 100*(board_width - 1 - head["x"]*2)**2
+  elif head["x"]*2 > (board_width - 1):
+    moves_score["left"] += 100*(head["x"]*2 - board_width + 1)**2
+  if head["y"]*2 < (board_height - 1):
+    moves_score["up"] += 100*(board_height - 1 - head["y"]*2)**2
+  elif head["y"]*2 > (board_height - 1):
+    moves_score["down"] += 100*(head["y"]*2 - board_height + 1)**2
 
   return calc_best_move(moves_score, turn)
 
-def find_safe_moves(head: typing.Dict, my_body, enemy_body) -> typing.List:
+def find_safe_moves(head: typing.Dict, my_body, enemy_body, obstacles) -> typing.List:
   moves = ["up", "down", "left", "right"]
   if head["x"] == 0:
     moves.remove("left")
@@ -50,26 +72,65 @@ def find_safe_moves(head: typing.Dict, my_body, enemy_body) -> typing.List:
     moves.remove("down")
   if head["y"] == board_height - 1:
     moves.remove("up")
+
+  up_head = move_to_coordinate(head, "up")
+  down_head = move_to_coordinate(head, "down")
+  left_head = move_to_coordinate(head, "left")
+  right_head = move_to_coordinate(head, "right")
   
-  for body in my_body[1:-1]:
-    if move_to_coordinate(head, "up") == body and "up" in moves:
-      moves.remove("up")
-    if move_to_coordinate(head, "down") == body and "down" in moves:
-      moves.remove("down")
-    if move_to_coordinate(head, "left") == body and "left" in moves:
-      moves.remove("left")
-    if move_to_coordinate(head, "right") == body and "right" in moves:
-      moves.remove("right")
+  if "up" in moves:
+    for body in my_body[1:-1]:
+      if up_head == body:
+        moves.remove("up")
+        break
+  if "down" in moves:
+    for body in my_body[1:-1]:
+      if down_head == body:
+        moves.remove("down")
+        break
+  if "left" in moves:
+    for body in my_body[1:-1]:
+      if left_head == body:
+        moves.remove("left")
+        break
+  if "right" in moves:
+    for body in my_body[1:-1]:
+      if right_head == body:
+        moves.remove("right")
   
-  for body in enemy_body:
-    if move_to_coordinate(head, "up") == body and "up" in moves:
-      moves.remove("up")
-    if move_to_coordinate(head, "down") == body and "down" in moves:
-      moves.remove("down")
-    if move_to_coordinate(head, "left") == body and "left" in moves:
-      moves.remove("left")
-    if move_to_coordinate(head, "right") == body and "right" in moves:
-      moves.remove("right")
+  if "up" in moves:
+    for body in enemy_body[:-1]:
+      if up_head == body:
+        moves.remove("up")
+  if "down" in moves:
+    for body in enemy_body[:-1]:
+      if down_head == body:
+        moves.remove("down")
+  if "left" in moves:
+    for body in enemy_body[:-1]:
+      if left_head == body:
+        moves.remove("left")
+  if "right" in moves:
+    for body in enemy_body[:-1]:
+      if right_head == body:
+        moves.remove("right")
+  
+  if "up" in moves:
+    for body in obstacles:
+      if up_head == body:
+        moves.remove("up")
+  if "down" in moves:
+    for body in obstacles:
+      if down_head == body:
+        moves.remove("down")
+  if "left" in moves:
+    for body in obstacles:
+      if left_head == body:
+        moves.remove("left")
+  if "right" in moves:
+    for body in obstacles:
+      if right_head == body:
+        moves.remove("right")
 
   return moves
 
@@ -86,7 +147,7 @@ def move_to_coordinate(coordinate: typing.Dict, move: str) -> typing.Dict:
 def calc_best_move(moves_score: typing.Dict, turn: int) -> str:
   bestmove = "___"
   bestmoves = []
-  max_score = 0
+  max_score = 1
   for move in ["left", "right", "up", "down"]:
     if moves_score[move] > max_score:
       max_score = moves_score[move]
