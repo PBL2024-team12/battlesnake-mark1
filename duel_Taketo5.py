@@ -52,14 +52,14 @@ def move(game_state: typing.Dict) -> typing.Dict:
     moves_score[move] = 1000000
 
   # 真ん中による
-  if head["x"]*2 < (board_width - 1):
-    moves_score["right"] += 100*(board_width - 1 - head["x"]*2)**2
-  elif head["x"]*2 > (board_width - 1):
-    moves_score["left"] += 100*(head["x"]*2 - board_width + 1)**2
-  if head["y"]*2 < (board_height - 1):
-    moves_score["up"] += 100*(board_height - 1 - head["y"]*2)**2
-  elif head["y"]*2 > (board_height - 1):
-    moves_score["down"] += 100*(head["y"]*2 - board_height + 1)**2
+  # if head["x"]*2 < (board_width - 1):
+  #   moves_score["right"] += 100*(board_width - 1 - head["x"]*2)**2
+  # elif head["x"]*2 > (board_width - 1):
+  #   moves_score["left"] += 100*(head["x"]*2 - board_width + 1)**2
+  # if head["y"]*2 < (board_height - 1):
+  #   moves_score["up"] += 100*(board_height - 1 - head["y"]*2)**2
+  # elif head["y"]*2 > (board_height - 1):
+  #   moves_score["down"] += 100*(head["y"]*2 - board_height + 1)**2
 
   # 食べ物による
 
@@ -89,6 +89,8 @@ def count_reachable_cells(safe_moves, m_body, e_body, foods):
     cells[body["x"]][body["y"]] = 1
   for food in foods:
     cells[food["x"]][food["y"]] = -1
+  cells[my_body[0]["x"]][my_body[0]["y"]] = 1000 + my_length
+  cells[enemy_body[0]["x"]][enemy_body[0]["y"]] = 2000 + en_length
   for move in safe_moves:
     cells_temp = cells.copy()
     listner_cells = [move_to_coordinate(my_body[0], move)]
@@ -128,12 +130,12 @@ def count_reachable_cells(safe_moves, m_body, e_body, foods):
           my_reachable_count += 1
         elif neighbor_my_len > 0:
           cells_temp[x][y] = 2
-      if my_length > turn:
+      if my_length - 1 > turn:
         fading_body = {"x": my_body[my_length - turn - 1]["x"], "y": my_body[my_length - turn - 1]["y"]}
         cells_temp[fading_body["x"]][fading_body["y"]] = 0
         if fading_body not in new_listner_cells:
           new_listner_cells.append(fading_body)
-      if en_length > turn:
+      if en_length - 1 > turn:
         fading_body = {"x": enemy_body[en_length - turn - 1]["x"], "y": enemy_body[en_length - turn - 1]["y"]}
         cells_temp[fading_body["x"]][fading_body["y"]] = 0
         if fading_body not in new_listner_cells:
@@ -141,6 +143,7 @@ def count_reachable_cells(safe_moves, m_body, e_body, foods):
       listner_cells = new_listner_cells.copy()
       turn += 1
     result[move] = my_reachable_count*1000
+    print(f"move: {move}, count: {my_reachable_count}")
   return result
 
 def find_safe_moves(head: typing.Dict, my_body, enemy_body, obstacles) -> typing.List:
