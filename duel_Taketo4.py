@@ -219,6 +219,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
   return {"move": bestmove}
 
+# 上下左右のうち、死なないマス（空白のマスまたは食べ物だけがあるマス）の方向をすべて返す。
 def find_safe_moves(head: typing.Dict, my_body, enemy_body) -> typing.List:
   moves = ["up", "down", "left", "right"]
   if head["x"] == 0:
@@ -252,6 +253,7 @@ def find_safe_moves(head: typing.Dict, my_body, enemy_body) -> typing.List:
 
   return moves
 
+# max_spanを上限として、敵の動きに関わらず100％生存できるターン数を調べて返す。max_span以上生存できる場合は「1,000,000」を返す。
 def life_span(head: typing.Dict, my_body, enemy_body: typing.Dict, max_span) -> typing.Dict:
   span = 0
   span_tmp = 0
@@ -277,6 +279,7 @@ def life_span(head: typing.Dict, my_body, enemy_body: typing.Dict, max_span) -> 
       span = span_tmp
   return span + 1
 
+# nターン目に「敵の体が存在しうる場所」と「その外枠（頭が存在しうる場所）」を渡すと、n+1ターン目に「敵の体が存在しうる場所」と「その外枠」を返す。
 def enemy_body_possible(enemy_body: typing.Dict, my_body: typing.List) -> typing.Dict:
   heads = enemy_body["heads"]
   bodies = enemy_body["bodies"]
@@ -316,17 +319,20 @@ def enemy_body_possible(enemy_body: typing.Dict, my_body: typing.List) -> typing
         next_heads.append(next_head_possible)
     bodies.append(head)
   return {"heads": next_heads, "bodies": bodies, "original_bodies": original_bodies}
-      
 
+# 座標を渡すと、その座標の上隣の座標を返す
 def up(coordinate: typing.Dict) -> typing.Dict:
   return {"x": coordinate["x"], "y": coordinate["y"] + 1}
 
+# 座標を渡すと、その座標の下隣の座標を返す
 def down(coordinate: typing.Dict) -> typing.Dict:
   return {"x": coordinate["x"], "y": coordinate["y"] - 1}
 
+# 座標を渡すと、その座標の左隣の座標を返す
 def left(coordinate: typing.Dict) -> typing.Dict:
   return {"x": coordinate["x"] - 1, "y": coordinate["y"]}
 
+# 座標を渡すと、その座標の右隣の座標を返す
 def right(coordinate: typing.Dict) -> typing.Dict:
   return {"x": coordinate["x"] + 1, "y": coordinate["y"]}
 
